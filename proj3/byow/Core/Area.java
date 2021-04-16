@@ -9,11 +9,11 @@ import java.util.*;
 
 public class Area {
 
-    private static final int WORLD_WIDTH = Engine.WIDTH;
-    private static final int WORLD_LENGTH = Engine.HEIGHT;
-    private static final int minSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 4;
-    private static final int maxSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 2;
-    private static final ArrayList<Area> ALL_MIGHTY = new ArrayList<Area>();
+    private final int WORLD_WIDTH = Engine.WIDTH;
+    private final int WORLD_LENGTH = Engine.HEIGHT;
+    private final int minSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 4;
+    private final int maxSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 2;
+    private final ArrayList<Area> ALL_MIGHTY = new ArrayList<Area>();
 
 
     /** Indicates the length of the area. */
@@ -44,7 +44,7 @@ public class Area {
     }
 
     /** Splits the area into two, assigns child1 & child2 to the split areas. */
-    public boolean chopper(Random gen) {
+    private boolean chopper(Random gen) {
         if (this.child1 != null && this.child2 != null) {
             return false;
         }
@@ -82,7 +82,7 @@ public class Area {
         return true;
     }
 
-    public static void makeAreas(TETile[][] world, Random gen) {
+    private void makeAreas(TETile[][] world, Random gen) {
         // Create a queue of our Areas, and a starting Area
         Area bigBoy = new Area(0, 0, WORLD_WIDTH, WORLD_LENGTH);
         ALL_MIGHTY.add(bigBoy);
@@ -108,7 +108,7 @@ public class Area {
         bigBoy.makeRooms(world, gen);
     }
     /** Puts rooms inside all our areas for BIGBOI*/
-    public void makeRooms(TETile[][] world, Random gen) {
+    private void makeRooms(TETile[][] world, Random gen) {
         //fill the inside with floor
         if (this.child1 != null || this.child2 != null) {
             if (this.child1 != null) {
@@ -143,7 +143,7 @@ public class Area {
             }
         }
     }
-    public static void connect4(TETile[][] world, Random gen) {
+    private void connect4(TETile[][] world, Random gen) {
         ArrayList<Area> allTiny = new ArrayList<Area>();
         for (Area rose : ALL_MIGHTY) {
             if (rose.child1 == null || rose.child2 == null) {
@@ -155,7 +155,7 @@ public class Area {
         }
     }
 
-    public static void hallwayHelper(Area a1, Area a2, TETile[][] world, Random gen) {
+    private void hallwayHelper(Area a1, Area a2, TETile[][] world, Random gen) {
         boolean el = RandomUtils.uniform(gen) > 0.5;
         int room1x;
         int room2x;
@@ -207,7 +207,7 @@ public class Area {
         }
     }
 
-    public static boolean neighborsIsFloor(int x, int y, TETile[][] world) {
+    private boolean neighborsIsFloor(int x, int y, TETile[][] world) {
         boolean xOverZero = x - 1 >= 0;
         boolean yOverZero = y - 1 >= 0;
         boolean xBehindBorder = x + 1 < WORLD_WIDTH;
@@ -219,8 +219,8 @@ public class Area {
         return botLeft || botRight || topLeft || topRight;
     }
 
-    public static TETile[][] generateWorld(long seed, TERenderer ter) {
-        // long SEED = 95953;
+    public TETile[][] generateWorld(long seed, TERenderer ter) {
+        // long SEED = 9223372036854775806;
         final Random gen = new Random(seed % Long.MAX_VALUE);
         // TERenderer ter = new TERenderer();
         // ter.initialize(WORLD_WIDTH, WORLD_LENGTH);
