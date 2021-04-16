@@ -11,7 +11,7 @@ public class Area {
 
     private final int WORLD_WIDTH = Engine.WIDTH;
     private final int WORLD_LENGTH = Engine.HEIGHT;
-    private final int minSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 4;
+    private final int minSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 3;
     private final int maxSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 2;
     private final ArrayList<Area> ALL_MIGHTY = new ArrayList<Area>();
 
@@ -123,10 +123,10 @@ public class Area {
             int y2 = 0;
             boolean notFarEnuf = true;
             while(notFarEnuf) {
-                x1 = RandomUtils.uniform(gen, this.xPos, this.xPos + this.width);
-                x2 = RandomUtils.uniform(gen, this.xPos, this.xPos + this.width);
-                y1 = RandomUtils.uniform(gen, this.yPos, this.yPos + this.length);
-                y2 = RandomUtils.uniform(gen, this.yPos, this.yPos + this.length);
+                x1 = RandomUtils.uniform(gen, this.xPos + 2, this.xPos + this.width - 2);
+                x2 = RandomUtils.uniform(gen, this.xPos + 2, this.xPos + this.width - 2);
+                y1 = RandomUtils.uniform(gen, this.yPos + 2, this.yPos + this.length - 2);
+                y2 = RandomUtils.uniform(gen, this.yPos + 2, this.yPos + this.length - 2);
                 if (x1 > 0 && x2 > 0 && x1 < WORLD_WIDTH - 1 && x2 < WORLD_WIDTH - 1
                         && y1 > 0 && y2 > 0 && y1 < WORLD_LENGTH - 1 && y2 < WORLD_LENGTH - 1) {
                     notFarEnuf = Math.abs(x1 - x2) < 2 || Math.abs(y1 - y2) < 2;

@@ -45,13 +45,24 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
+
         long seed = Long.parseLong(input.substring(1, input.length() - 1));
         Area bigBoy = new Area(0, 0, WIDTH, HEIGHT);
 
         TETile[][] finalWorldFrame = bigBoy.generateWorld(seed, ter);
 
-        // ter.renderFrame(finalWorldFrame);
+        // ter.renderFrame(finalWorldFr ame);
         return finalWorldFrame;
         // return null;
     }
+
+    /** Local Testing
+    public static void main(String[] args) {
+        long seed = 5820571;
+        Area bigBoy = new Area(0, 0, WIDTH, HEIGHT);
+        ter.initialize(WIDTH, HEIGHT);
+        TETile[][] finalWorldFrame = bigBoy.generateWorld(seed, ter);
+        ter.renderFrame(finalWorldFrame);
+    }
+     */
 }
