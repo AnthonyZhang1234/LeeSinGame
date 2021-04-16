@@ -47,10 +47,10 @@ public class Engine {
         // that works for many different input types.
         long seed = Long.parseLong(input.substring(1, input.length() - 1));
 
-        
+
         TETile[][] finalWorldFrame = Area.generateWorld(seed, ter);
 
-        ter.renderFrame(finalWorldFrame);
+        // ter.renderFrame(finalWorldFrame);
         return finalWorldFrame;
         // return null;
     }
