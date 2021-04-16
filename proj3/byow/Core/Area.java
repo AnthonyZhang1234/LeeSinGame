@@ -222,7 +222,7 @@ public class Area {
 
     public static TETile[][] generateWorld(long SEED, TERenderer ter) {
         final Random gen = new Random(SEED);
-        ter.initialize(WORLD_WIDTH, WORLD_LENGTH);
+        // ter.initialize(WORLD_WIDTH, WORLD_LENGTH);
 
         // initialize tiles
         TETile[][] world = new TETile[WORLD_WIDTH][WORLD_LENGTH];
