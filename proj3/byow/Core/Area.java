@@ -150,7 +150,6 @@ public class Area {
                 allTiny.add(rose);
             }
         }
-        System.out.println(allTiny.size());
         for (int i = 0; i < allTiny.size() - 1; i++) {
             hallwayHelper(allTiny.get(i), allTiny.get(i + 1), world, gen);
         }
