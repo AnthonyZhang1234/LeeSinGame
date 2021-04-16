@@ -150,6 +150,7 @@ public class Area {
                 allTiny.add(rose);
             }
         }
+        System.out.println(allTiny.size());
         for (int i = 0; i < allTiny.size() - 1; i++) {
             hallwayHelper(allTiny.get(i), allTiny.get(i + 1), world, gen);
         }
@@ -219,8 +220,9 @@ public class Area {
         return botLeft || botRight || topLeft || topRight;
     }
 
-    public static TETile[][] generateWorld(long SEED, TERenderer ter) {
-        final Random gen = new Random(SEED);
+    public static TETile[][] generateWorld(long seed, TERenderer ter) {
+        // long SEED = 95953;
+        final Random gen = new Random(seed & Long.MAX_VALUE);
         // TERenderer ter = new TERenderer();
         // ter.initialize(WORLD_WIDTH, WORLD_LENGTH);
 
