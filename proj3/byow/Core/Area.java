@@ -221,7 +221,7 @@ public class Area {
 
     public static TETile[][] generateWorld(long seed, TERenderer ter) {
         // long SEED = 95953;
-        final Random gen = new Random(seed & Long.MAX_VALUE);
+        final Random gen = new Random(seed % Long.MAX_VALUE);
         // TERenderer ter = new TERenderer();
         // ter.initialize(WORLD_WIDTH, WORLD_LENGTH);
 
