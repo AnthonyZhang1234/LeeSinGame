@@ -11,19 +11,30 @@ import static byow.Core.Utils.*;
 import java.awt.*;
 
 public class Engine {
+    /** Game renderer. */
     TERenderer ter = new TERenderer();
-    /* Feel free to change the width and height. */
+    /** Dimensions of the game world. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+    /** Dimensions of the home menu. */
     public static final int MENU_WIDTH = 40;
     public static final int MENU_HEIGHT = 40;
+    /** Helper variable storing number characters. */
     public static final String NUMBERS = "0123456789";
+    /** Current Working Directory. */
     private static final File CWD = new File(System.getProperty("user.dir"));
+    /** Folder that holds save files. */
     private static final File SAVES = join(CWD, "saves");
+    /** Helper variable that determines if the world has been created. */
     private boolean bigBoyNotCreated = true;
+    /** Current game world. */
     private Area bigBoy;
+    /** Tiles of the current game world. */
     private TETile[][] finalWorldFrame = null;
 
+    /**
+     * Method that displays what the user is typing.
+     */
     public void drawFrame(String s) {
         // draws the menu;
         Font font = new Font("Monaco", Font.BOLD, 15);
@@ -34,6 +45,9 @@ public class Engine {
         StdDraw.show();
     }
 
+    /**
+     * Method that sustains the seed prompt while player inputs desired seed.
+     */
     public void drawSeed() {
         Font font = new Font("Monaco", Font.BOLD, 15);
         StdDraw.setFont(font);
@@ -43,6 +57,9 @@ public class Engine {
         StdDraw.show();
     }
 
+    /**
+     * Method that draws the home menu of the game.
+     */
     public void drawMenu() {
         Font font = new Font("Monaco", Font.BOLD, 30);
         StdDraw.setFont(font);
@@ -55,6 +72,9 @@ public class Engine {
         StdDraw.show();
     }
 
+    /**
+     * Method responsible for updating the HUD of the world based on players' mouse location.
+     */
     public void drawHud(TETile[][] world) {
         Font font = new Font("Monaco", Font.BOLD, 10);
         StdDraw.setFont(font);
@@ -70,9 +90,37 @@ public class Engine {
         }
     }
 
-    public char lowerCase(char c) {
+    /**
+     * Helper method to turn chars into lowercase.
+     */
+    private char lowerCase(char c) {
         String temp = "" + c;
         return temp.toLowerCase().charAt(0);
+     }
+
+    /**
+     * Method to update the world whenever the user presses a key.
+     */
+     private int updateWorld(String input, int count) {
+         if (count == 0) {
+             ter.initialize(WIDTH, HEIGHT);
+             count++;
+         }
+         finalWorldFrame = interactWithInputString(input);
+         ter.renderFrame(finalWorldFrame);
+         return count;
+     }
+
+    /**
+     * Method that handles the scenario where the player types ':q' to quit the game.
+     */
+     private void handleQuitCase(String input) {
+         String possQuit = input.toLowerCase().substring(0, input.length() - 2);
+         if (input.toLowerCase().substring(input.length() - 2).equals(":q")) {
+             File saveFile = join(SAVES, "save");
+             writeContents(saveFile, possQuit);
+             System.exit(0);
+         }
      }
 
     /**
@@ -103,12 +151,7 @@ public class Engine {
                         case 'l':
                             input = readContentsAsString(join(SAVES, "save"));
                             input += typed;
-                            if (count == 0) {
-                                ter.initialize(WIDTH, HEIGHT);
-                                count++;
-                            }
-                            TETile[][] resetWorld = interactWithInputString(input);
-                            ter.renderFrame(resetWorld);
+                            count = updateWorld(input, count);
                             break;
                         case 'q':
                             System.exit(0);
@@ -127,20 +170,8 @@ public class Engine {
                     } else if (input.length() > 2) {
                         inGame = true;
                         input += typed;
-                        System.out.println(input);
-                        String possQuit = input.toLowerCase().substring(0, input.length() - 2);
-                        if (input.toLowerCase().substring(input.length() - 2).equals(":q")) {
-                            File saveFile = join(SAVES, "save");
-                            writeContents(saveFile, possQuit);
-                            System.exit(0);
-                            break;
-                        }
-                        if (count == 0) {
-                            ter.initialize(WIDTH, HEIGHT);
-                            count++;
-                        }
-                        finalWorldFrame = interactWithInputString(input);
-                        ter.renderFrame(finalWorldFrame);
+                        handleQuitCase(input);
+                        count = updateWorld(input, count);
                     }
                 }
             }

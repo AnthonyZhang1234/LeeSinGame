@@ -21,6 +21,7 @@ public class Area {
     private final int minSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 3;
     private final int maxSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 2;
     private final ArrayList<Area> ALL_MIGHTY = new ArrayList<Area>();
+    private final TETile FLOOR_TILE = Tileset.BASIC_FLOOR_3;
 
 
     /** Indicates the length of the area. */
@@ -149,7 +150,7 @@ public class Area {
             this.y2 = this.y1 + Math.abs(y1 - y2);
             for(int i = this.x1; i <= this.x2; i++) {
                 for (int j = this.y1; j <= this.y2; j++) {
-                    world[i][j] = Tileset.FLOOR;
+                    world[i][j] = FLOOR_TILE;
                 }
             }
         }
@@ -186,33 +187,33 @@ public class Area {
         if (room1y > room2y) {  // Right-Down or Down-Right
             if (el) {
                 for (int x = room1x; x <= room2x; x++) {
-                    world[x][room1y] = Tileset.FLOOR;
+                    world[x][room1y] = FLOOR_TILE;
                 }
                 for (int y = room1y; y >= room2y; y--) {
-                    world[room2x][y] = Tileset.FLOOR;
+                    world[room2x][y] = FLOOR_TILE;
                 }
             } else {
                 for (int y = room1y; y >= room2y; y--) {
-                    world[room1x][y] = Tileset.FLOOR;
+                    world[room1x][y] = FLOOR_TILE;
                 }
                 for (int x = room1x; x <= room2x; x++) {
-                    world[x][room2y] = Tileset.FLOOR;
+                    world[x][room2y] = FLOOR_TILE;
                 }
             }
         } else {                // Right-Up or Up-Right
             if (el) {
                 for (int x = room1x; x <= room2x; x++) {
-                    world[x][room1y] = Tileset.FLOOR;
+                    world[x][room1y] = FLOOR_TILE;
                 }
                 for (int y = room1y; y <= room2y; y++) {
-                    world[room2x][y] = Tileset.FLOOR;
+                    world[room2x][y] = FLOOR_TILE;
                 }
             } else {
                 for (int y = room1y; y <= room2y; y++) {
-                    world[room1x][y] = Tileset.FLOOR;
+                    world[room1x][y] = FLOOR_TILE;
                 }
                 for (int x = room1x; x <= room2x; x++) {
-                    world[x][room2y] = Tileset.FLOOR;
+                    world[x][room2y] = FLOOR_TILE;
                 }
             }
         }
@@ -223,10 +224,10 @@ public class Area {
         boolean yOverZero = y - 1 >= 0;
         boolean xBehindBorder = x + 1 < WORLD_WIDTH;
         boolean yBehindBorder = y + 1 < WORLD_LENGTH;
-        boolean botLeft = xOverZero && yOverZero && world[x - 1][y - 1] == Tileset.FLOOR;
-        boolean botRight = xBehindBorder && yOverZero && world[x + 1][y - 1] == Tileset.FLOOR;
-        boolean topLeft = xOverZero && yBehindBorder && world[x - 1][y + 1] == Tileset.FLOOR;
-        boolean topRight = xBehindBorder && yBehindBorder && world[x + 1][y + 1] == Tileset.FLOOR;
+        boolean botLeft = xOverZero && yOverZero && world[x - 1][y - 1] == FLOOR_TILE;
+        boolean botRight = xBehindBorder && yOverZero && world[x + 1][y - 1] == FLOOR_TILE;
+        boolean topLeft = xOverZero && yBehindBorder && world[x - 1][y + 1] == FLOOR_TILE;
+        boolean topRight = xBehindBorder && yBehindBorder && world[x + 1][y + 1] == FLOOR_TILE;
         return botLeft || botRight || topLeft || topRight;
     }
 
@@ -248,7 +249,7 @@ public class Area {
                 if (world[x][y] == Tileset.NOTHING && neighborsIsFloor(x, y, world)) {
                     world[x][y] = Tileset.BASIC_WALL;
                 }
-                if (leeCount == 0 && world[x][y] == Tileset.FLOOR) {
+                if (leeCount == 0 && world[x][y] == FLOOR_TILE) {
                     // Maybe set some avatar object or variable to these coords
                     world[x][y] = Tileset.LEE_SIN;
                     leeCount++;
@@ -264,12 +265,11 @@ public class Area {
 
     public TETile[][] moveLee(String commands, TETile[][] world) {
         if (commands.length() > 0) {
-            world[leeX][leeY] = Tileset.FLOOR;
+            world[leeX][leeY] = FLOOR_TILE;
         }
         leeX = ogLeeX;
         leeY = ogLeeY;
         for (int i = 0; i < commands.length(); i++) {
-            // world[leeX][leeY] = Tileset.FLOOR;
             char move = commands.toLowerCase().charAt(i);
             switch(move) {
                 case 'w':
