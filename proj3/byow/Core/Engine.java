@@ -37,6 +37,7 @@ public class Engine {
     public void drawSeed() {
         Font font = new Font("Monaco", Font.BOLD, 15);
         StdDraw.setFont(font);
+        StdDraw.setPenColor(Color.WHITE);
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4,
                 "Enter a number seed! Press (S) when satisfied!");
         StdDraw.show();
@@ -54,9 +55,25 @@ public class Engine {
         StdDraw.show();
     }
 
-    public void drawHud() {
-
+    public void drawHud(TETile[][] world) {
+        Font font = new Font("Monaco", Font.BOLD, 10);
+        StdDraw.setFont(font);
+        StdDraw.setPenColor(Color.BLACK);
+        StdDraw.filledRectangle(WIDTH / 2, HEIGHT - 1, WIDTH / 2, 0.5);
+        StdDraw.setPenColor(Color.WHITE);
+        int x = (int) StdDraw.mouseX();
+        int y = (int) StdDraw.mouseY();
+        if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT - 1) {
+            TETile hudTile = world[(int) x][(int) y];
+            StdDraw.text(5, HEIGHT - 1, hudTile.description());
+            StdDraw.show();
+        }
     }
+
+    public char lowerCase(char c) {
+        String temp = "" + c;
+        return temp.toLowerCase().charAt(0);
+     }
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -70,11 +87,12 @@ public class Engine {
         ter.initialize(MENU_WIDTH, MENU_HEIGHT);
         drawMenu();
         int count = 0;
+        boolean inGame = false;
         while (true) {
             // this should run once you type some keys to be the seed
             if (StdDraw.hasNextKeyTyped()) {
                 //when the user does not type n or s
-                char typed = StdDraw.nextKeyTyped();
+                char typed = lowerCase(StdDraw.nextKeyTyped());
                 if (input.length() == 0) {
                     switch (typed) {
                         case 'n':
@@ -89,8 +107,8 @@ public class Engine {
                                 ter.initialize(WIDTH, HEIGHT);
                                 count++;
                             }
-                            TETile[][] finalWorldFrame = interactWithInputString(input);
-                            ter.renderFrame(finalWorldFrame);
+                            TETile[][] resetWorld = interactWithInputString(input);
+                            ter.renderFrame(resetWorld);
                             break;
                         case 'q':
                             System.exit(0);
@@ -106,7 +124,8 @@ public class Engine {
                             drawFrame(input.substring(1));
                             drawSeed();
                         }
-                    } else if (input.length() > 2){
+                    } else if (input.length() > 2) {
+                        inGame = true;
                         input += typed;
                         System.out.println(input);
                         String possQuit = input.toLowerCase().substring(0, input.length() - 2);
@@ -120,10 +139,13 @@ public class Engine {
                             ter.initialize(WIDTH, HEIGHT);
                             count++;
                         }
-                        TETile[][] finalWorldFrame = interactWithInputString(input);
+                        finalWorldFrame = interactWithInputString(input);
                         ter.renderFrame(finalWorldFrame);
                     }
                 }
+            }
+            if (inGame) {
+                drawHud(finalWorldFrame);
             }
         }
     }
@@ -170,6 +192,5 @@ public class Engine {
         finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame);
 
         return finalWorldFrame;
-        // return null;
     }
 }
