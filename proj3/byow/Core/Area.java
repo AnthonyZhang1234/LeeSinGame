@@ -7,10 +7,17 @@ import byow.TileEngine.Tileset;
 import java.util.Random;
 import java.util.*;
 
+/**
+ * @source BSP Algorithm
+ * Generates Areas via a variant of the BSP algorithm, and randomly creates rectangular
+ * rooms via random 2 points selected to act as corners of the rooms. Then connects
+ * the rooms through hallways that connect the bottom left corner of one room to the
+ * top right corner of another room.
+ */
 public class Area {
 
     private final int WORLD_WIDTH = Engine.WIDTH;
-    private final int WORLD_LENGTH = Engine.HEIGHT;
+    private final int WORLD_LENGTH = Engine.HEIGHT - 1;
     private final int minSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 3;
     private final int maxSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 2;
     private final ArrayList<Area> ALL_MIGHTY = new ArrayList<Area>();
@@ -33,7 +40,11 @@ public class Area {
     private int x2;
     private int y1;
     private int y2;
-
+    /** Lee's coordinates. */
+    private int leeX;
+    private int ogLeeX;
+    private int leeY;
+    private int ogLeeY;
 
     /** Creates Area. */
     public Area(int x, int y, int w, int l) {
@@ -219,11 +230,8 @@ public class Area {
         return botLeft || botRight || topLeft || topRight;
     }
 
-    public TETile[][] generateWorld(long seed, TERenderer ter) {
-        // long SEED = 9223372036854775806;
-        final Random gen = new Random(seed % Long.MAX_VALUE);
-        // TERenderer ter = new TERenderer();
-        // ter.initialize(WORLD_WIDTH, WORLD_LENGTH);
+    public TETile[][] generateWorld(long seed, String commands) {
+        Random gen = new Random(seed % Long.MAX_VALUE);
 
         // initialize tiles
         TETile[][] world = new TETile[WORLD_WIDTH][WORLD_LENGTH];
@@ -234,14 +242,59 @@ public class Area {
         }
         makeAreas(world, gen);
         connect4(world, gen);
+        int leeCount = 0;
         for (int x = 0; x < WORLD_WIDTH; x ++) {
             for (int y = 0; y < WORLD_LENGTH; y ++) {
                 if (world[x][y] == Tileset.NOTHING && neighborsIsFloor(x, y, world)) {
-                    world[x][y] = Tileset.WALL;
+                    world[x][y] = Tileset.BASIC_WALL;
+                }
+                if (leeCount == 0 && world[x][y] == Tileset.FLOOR) {
+                    // Maybe set some avatar object or variable to these coords
+                    world[x][y] = Tileset.LEE_SIN;
+                    leeCount++;
+                    leeX = x;
+                    ogLeeX = x;
+                    leeY = y;
+                    ogLeeY = y;
                 }
             }
         }
-        // ter.renderFrame(world);
+        return world;
+    }
+
+    public TETile[][] moveLee(String commands, TETile[][] world) {
+        if (commands.length() > 0) {
+            world[leeX][leeY] = Tileset.FLOOR;
+        }
+        leeX = ogLeeX;
+        leeY = ogLeeY;
+        for (int i = 0; i < commands.length(); i++) {
+            // world[leeX][leeY] = Tileset.FLOOR;
+            char move = commands.toLowerCase().charAt(i);
+            switch(move) {
+                case 'w':
+                    if (world[leeX][leeY + 1] != Tileset.BASIC_WALL) {
+                        this.leeY++;
+                    }
+                    break;
+                case 'a':
+                    if (world[leeX - 1][leeY] != Tileset.BASIC_WALL) {
+                        this.leeX--;
+                    }
+                    break;
+                case 's':
+                    if (world[leeX][leeY - 1] != Tileset.BASIC_WALL) {
+                        this.leeY--;
+                    }
+                    break;
+                case 'd':
+                    if (world[leeX + 1][leeY] != Tileset.BASIC_WALL) {
+                        this.leeX++;
+                    }
+                    break;
+            }
+        }
+        world[leeX][leeY] = Tileset.LEE_SIN;
         return world;
     }
 }

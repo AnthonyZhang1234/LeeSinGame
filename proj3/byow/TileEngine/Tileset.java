@@ -33,6 +33,9 @@ public class Tileset {
     public static final TETile SAND = new TETile('▒', Color.yellow, Color.black, "sand");
     public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
+    public static final TETile LEE_SIN = new TETile('L', Color.yellow, Color.black, "lee sin", "lee_sin.png");
+    public static final TETile LEE_SIN_2 = new TETile('E', Color.yellow, Color.black, "lee sin 2", "lee_sin2.png");
+    public static final TETile BASIC_WALL = new TETile('W', Color.black, Color.black, "basic wall", "basic_wall.png");
 }
 
 
