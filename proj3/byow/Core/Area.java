@@ -172,7 +172,7 @@ public class Area {
             this.y1 = Math.min(tempY1, tempY2);
             this.y2 = this.y1 + Math.abs(tempY1 - tempY2);
             // Create lantern in random (not (x1, y1) || (x2, y2))
-            this.lanternX = RandomUtils.uniform(gen, this.x1 + 1 , this.x2);
+            this.lanternX = RandomUtils.uniform(gen, this.x1 + 1, this.x2);
             this.lanternY = RandomUtils.uniform(gen, this.y1 + 1, this.y2);
             for (int i = this.x1; i <= this.x2; i++) {
                 for (int j = this.y1; j <= this.y2; j++) {
@@ -181,7 +181,6 @@ public class Area {
                 }
             }
             world[this.lanternX][this.lanternY] = Tileset.DIM_LANTERN;
-            // lightRoomOfLantern(world, this.x1, this.x2, this.y1, this.y2, this.lanternX, this.lanternY);
         }
     }
 
@@ -293,7 +292,7 @@ public class Area {
         boolean yOverZero = y - 1 >= 0;
         boolean xBehindBorder = x + 1 < WORLD_WIDTH;
         boolean yBehindBorder = y + 1 < WORLD_LENGTH;
-        boolean botLeft = xOverZero && yOverZero && floors.contains(world[x - 1][y - 1]) ;
+        boolean botLeft = xOverZero && yOverZero && floors.contains(world[x - 1][y - 1]);
         boolean botRight = xBehindBorder && yOverZero && floors.contains(world[x + 1][y - 1]);
         boolean topLeft = xOverZero && yBehindBorder && floors.contains(world[x - 1][y + 1]);
         boolean topRight = xBehindBorder && yBehindBorder && floors.contains(world[x + 1][y + 1]);
