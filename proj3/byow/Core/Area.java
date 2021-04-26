@@ -59,10 +59,16 @@ public class Area {
     /** Lantern coordinates. */
     private int lanternX;
     private int lanternY;
+    /** Indicates lantern is activated. */
+    private boolean activated;
     /** Devil's lantern. */
     private boolean devil;
     /** Devil's curse. */
     private boolean cursed;
+    /** Shaco's lantern. */
+    private boolean shaco;
+    /** Shaco's confusion. */
+    private int confusedIndex;
 
     /** Creates Area. */
     public Area(int x, int y, int w, int l) {
@@ -72,8 +78,11 @@ public class Area {
         this.width = w;
         this.solidTiles = new HashSet<>();
         this.allTiny = new ArrayList<>();
+        this.activated = false;
         this.devil = false;
         this.cursed = false;
+        this.shaco = false;
+        this.confusedIndex = -1;
         solidTiles.add(Tileset.BASIC_WALL);
         solidTiles.add(Tileset.DIM_LANTERN);
         solidTiles.add(Tileset.LIT_LANTERN);
@@ -340,13 +349,16 @@ public class Area {
                 }
             }
         }
-        // Choose a lantern to be the devil's lantern
+        // Choose a lantern to be the devil's lantern & shaco's lantern
         int devilInt = RandomUtils.uniform(gen, allTiny.size());
+        int shacoInt = RandomUtils.uniform(gen, allTiny.size());
         allTiny.get(devilInt).devil = true;
+        allTiny.get(shacoInt).shaco = true;
         return world;
     }
 
-    private void changeLantern(TETile[][] world, boolean turnOff) {
+    private boolean changeLantern(TETile[][] world, boolean turnOff) {
+        boolean confusedCheck = false;
         TETile currentLantern = Tileset.DIM_LANTERN;
         TETile newLantern = Tileset.LIT_LANTERN;
         if (turnOff) {
@@ -370,7 +382,7 @@ public class Area {
             lanY--;
         }
         if (lanX == leeX && lanY == leeY) {
-            return;
+            return false;
         }
         int roomX1 = 0;
         int roomY1 = 0;
@@ -385,6 +397,14 @@ public class Area {
                 if (dab.devil) {
                     this.cursed = true;
                 }
+                if (dab.shaco) {
+                    confusedCheck = true;
+                }
+                if (turnOff) {
+                    dab.activated = false;
+                } else {
+                    dab.activated = true;
+                }
                 break;
             }
         }
@@ -393,6 +413,7 @@ public class Area {
         } else {
             lightRoomOfLantern(world, roomX1, roomX2, roomY1, roomY2, lanX, lanY);
         }
+        return confusedCheck;
     }
 
     public void gameOver(TETile[][] world, int x, int y, TERenderer ter) {
@@ -406,13 +427,38 @@ public class Area {
             StdDraw.clear(Color.BLACK);
             StdDraw.text(WORLD_WIDTH / 2, WORLD_LENGTH / 2, "Game Over!");
             StdDraw.show();
-            StdDraw.pause(5000);
+            StdDraw.pause(2000);
             System.exit(0);
         }
     }
 
+    public void gameWin() {
+        Font font = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(font);
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.text(WORLD_WIDTH / 2, WORLD_LENGTH / 2, "You Win!");
+        StdDraw.show();
+        StdDraw.pause(2000);
+        System.exit(0);
+    }
+
+    public boolean isCursed() {
+        return this.cursed;
+    }
+
+    public boolean isConfused() {
+        return this.confusedIndex != -1;
+    }
+
+    private void curseCheck(TETile[][] world, boolean load, int x, int y) {
+        if (load && this.cursed) {
+            world[x][y] = CURSED_TILE;
+        }
+    }
+
     public TETile[][] moveLee(String commands, TETile[][] world, TERenderer ter, boolean load) {
-        // CHECK EVERYTHING AGAIN AFTER CREATIVE ADDITIONS 
+        // CHECK EVERYTHING AGAIN AFTER CREATIVE ADDITIONS
         if (commands.length() > 0) {
             if (this.cursed) {
                 world[leeX][leeY] = CURSED_TILE;
@@ -426,44 +472,51 @@ public class Area {
         leeY = ogLeeY;
         for (int i = 0; i < commands.length(); i++) {
             char move = commands.toLowerCase().charAt(i);
+            if (this.confusedIndex!= -1 && i >= this.confusedIndex) {
+                if (move == 'w') {
+                    move = 's';
+                } else if (move == 's') {
+                    move = 'w';
+                } else if (move == 'a') {
+                    move = 'd';
+                } else if (move == 'd') {
+                    move = 'a';
+                }
+            }
             switch (move) {
                 case 'w':
                     if (!this.solidTiles.contains(world[leeX][leeY + 1])) {
-                        if (load && this.cursed) {
-                            world[leeX][leeY] = CURSED_TILE;
-                        }
+                        curseCheck(world, load, leeX, leeY);
                         this.leeY++;
                     }
                     break;
                 case 'a':
                     if (!this.solidTiles.contains(world[leeX - 1][leeY])) {
-                        if (load && this.cursed) {
-                            world[leeX][leeY] = CURSED_TILE;
-                        }
+                        curseCheck(world, load, leeX, leeY);
                         this.leeX--;
                     }
                     break;
                 case 's':
                     if (!this.solidTiles.contains(world[leeX][leeY - 1])) {
-                        if (load && this.cursed) {
-                            world[leeX][leeY] = CURSED_TILE;
-                        }
+                        curseCheck(world, load, leeX, leeY);
                         this.leeY--;
                     }
                     break;
                 case 'd':
                     if (!this.solidTiles.contains(world[leeX + 1][leeY])) {
-                        if (load && this.cursed) {
-                            world[leeX][leeY] = CURSED_TILE;
-                        }
+                        curseCheck(world, load, leeX, leeY);
                         this.leeX++;
                     }
                     break;
                 case 'p':
-                    changeLantern(world, false);
+                    if (changeLantern(world, false) && this.confusedIndex == -1) {
+                        this.confusedIndex = i;
+                    }
                     break;
                 case 'o':
-                    changeLantern(world, true);
+                    if (changeLantern(world, true) && this.confusedIndex == -1) {
+                        this.confusedIndex = i;
+                    }
                     break;
                 default:
                     break;
@@ -474,6 +527,16 @@ public class Area {
         }
         if (!(lastLeeX == leeX && lastLeeY == leeY)) {
             gameOver(world, leeX, leeY, ter);
+        }
+        boolean win = true;
+        for (Area room : allTiny) {
+            if (!room.activated) {
+                win = false;
+                break;
+            }
+        }
+        if (win) {
+            gameWin();
         }
         world[leeX][leeY] = Tileset.LEE_SIN;
         return world;

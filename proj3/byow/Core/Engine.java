@@ -55,6 +55,15 @@ public class Engine {
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4,
                 "Enter a number seed! Press (S) when satisfied!");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4 + 2,
+                "Goal: Turn on all the lanterns!");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4,"Controls [Usually ;)]:");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 1,"W - Move Up");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 2,"A - Move Left");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 3,"S - Move Down");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 4,"D - Move Right");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 5,"O - Turn Lantern Off");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 6,"P - Turn Lantern On");
         StdDraw.show();
     }
 
@@ -66,7 +75,7 @@ public class Engine {
         StdDraw.setFont(font);
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.clear(Color.BLACK);
-        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4, "Lee Sin's Adventure");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4, "Lee Sin and the Spooky Lanterns");
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 2, "Press (N) to Start!");
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 2 - 5, "Press (L) to Load Game!");
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 2 - 10, "Press (Q) to Quit!");
@@ -84,6 +93,12 @@ public class Engine {
         StdDraw.setPenColor(Color.WHITE);
         int x = (int) StdDraw.mouseX();
         int y = (int) StdDraw.mouseY();
+        if (bigBoy.isCursed()) {
+            StdDraw.text(WIDTH / 2, HEIGHT - 1, "You've been cursed!");
+        }
+        if (bigBoy.isConfused()) {
+            StdDraw.text(WIDTH - 5, HEIGHT - 1, "You're now confused!");
+        }
         if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT - 1) {
             TETile hudTile = world[x][y];
             StdDraw.text(5, HEIGHT - 1, hudTile.description());
