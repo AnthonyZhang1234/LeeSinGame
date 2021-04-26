@@ -114,12 +114,14 @@ public class Engine {
     /**
      * Method that handles the scenario where the player types ':q' to quit the game.
      */
-    public void handleQuitCase(String input) {
+    public void handleQuitCase(String input, boolean ag) {
         String possQuit = input.toLowerCase().substring(0, input.length() - 2);
         if (input.toLowerCase().substring(input.length() - 2).equals(":q")) {
             File saveFile = join(CWD, "save.txt");
             writeContents(saveFile, possQuit);
-            System.exit(0);
+            if (!ag) {
+                System.exit(0);
+            }
         }
     }
 
@@ -170,7 +172,7 @@ public class Engine {
                     } else if (input.length() > 2) {
                         inGame = true;
                         input += typed;
-                        handleQuitCase(input);
+                        handleQuitCase(input, false);
                         count = updateWorld(input, count);
                     }
                 }
@@ -224,7 +226,7 @@ public class Engine {
         }
 
         finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame);
-        handleQuitCase(input);
+        handleQuitCase(input, true);
         return finalWorldFrame;
     }
 }
