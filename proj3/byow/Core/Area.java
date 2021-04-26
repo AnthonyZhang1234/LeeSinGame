@@ -432,7 +432,9 @@ public class Area {
         }
     }
 
-    public void gameWin() {
+    public void gameWin(TETile[][] world, TERenderer ter) {
+        ter.renderFrame(world);
+        StdDraw.pause(1000);
         Font font = new Font("Monaco", Font.BOLD, 30);
         StdDraw.setFont(font);
         StdDraw.setPenColor(Color.WHITE);
@@ -536,7 +538,7 @@ public class Area {
             }
         }
         if (win) {
-            gameWin();
+            gameWin(world, ter);
         }
         world[leeX][leeY] = Tileset.LEE_SIN;
         return world;
