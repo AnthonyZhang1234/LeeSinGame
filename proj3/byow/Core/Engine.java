@@ -57,13 +57,13 @@ public class Engine {
                 "Enter a number seed! Press (S) when satisfied!");
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4 + 2,
                 "Goal: Turn on all the lanterns!");
-        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4,"Controls [Usually ;)]:");
-        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 1,"W - Move Up");
-        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 2,"A - Move Left");
-        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 3,"S - Move Down");
-        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 4,"D - Move Right");
-        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 5,"O - Turn Lantern Off");
-        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 6,"P - Turn Lantern On");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4, "Controls [Usually ;)]:");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 1, "W - Move Up");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 2, "A - Move Left");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 3, "S - Move Down");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 4, "D - Move Right");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 5, "O - Turn Lantern Off");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 6, "P - Turn Lantern On");
         StdDraw.show();
     }
 

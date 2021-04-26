@@ -474,7 +474,7 @@ public class Area {
         leeY = ogLeeY;
         for (int i = 0; i < commands.length(); i++) {
             char move = commands.toLowerCase().charAt(i);
-            if (this.confusedIndex!= -1 && i >= this.confusedIndex) {
+            if (this.confusedIndex != -1 && i >= this.confusedIndex) {
                 if (move == 'w') {
                     move = 's';
                 } else if (move == 's') {
