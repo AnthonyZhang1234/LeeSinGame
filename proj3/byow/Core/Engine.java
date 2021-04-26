@@ -109,7 +109,7 @@ public class Engine {
         finalWorldFrame = interactWithInputString(input);
         ter.renderFrame(finalWorldFrame);
         return count;
-     }
+    }
 
     /**
      * Method that handles the scenario where the player types ':q' to quit the game.
