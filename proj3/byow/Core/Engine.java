@@ -22,9 +22,9 @@ public class Engine {
     /** Helper variable storing number characters. */
     public static final String NUMBERS = "0123456789";
     /** Current Working Directory. */
-    private static final File CWD = new File(System.getProperty("user.dir"));
+    public static final File CWD = new File(System.getProperty("user.dir"));
     /** Folder that holds save files. */
-    private static final File SAVES = join(CWD, "saves");
+    public static final File SAVES = join(CWD, "saves");
     /** Helper variable that determines if the world has been created. */
     private boolean bigBoyNotCreated = true;
     /** Current game world. */
