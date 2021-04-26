@@ -139,9 +139,9 @@ public class Engine {
         int count = 0;
         boolean inGame = false;
         while (true) {
-            // this should run once you type some keys to be the seed
+            // this should run once you type some keys
             if (StdDraw.hasNextKeyTyped()) {
-                //when the user does not type n or s
+                //checks if the user wanted to do some action from the menu
                 char typed = lowerCase(StdDraw.nextKeyTyped());
                 if (input.length() == 0) {
                     switch (typed) {
@@ -217,13 +217,12 @@ public class Engine {
         //        } // for AG
         int sPos = input.toLowerCase().indexOf('s');
         long seed = Long.parseLong(input.substring(1, sPos));
-        String commands = input.substring(sPos + 1);
+        String commands = input.substring(sPos + 1); 
         if (bigBoyNotCreated) {
             bigBoy = new Area(0, 0, WIDTH, HEIGHT);
             bigBoyNotCreated = false;
-            finalWorldFrame = bigBoy.generateWorld(seed, commands);
+            finalWorldFrame = bigBoy.generateWorld(seed);
         }
-        System.out.println(input);
         finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame);
         // handleQuitCase(input, true); // for AG
         return finalWorldFrame;

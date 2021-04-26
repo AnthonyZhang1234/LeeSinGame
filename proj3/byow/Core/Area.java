@@ -45,8 +45,16 @@ public class Area {
     private int ogLeeX;
     private int leeY;
     private int ogLeeY;
+    private TETile leeTile;
     /** Set holding solid tiles. */
     private HashSet<TETile> solidTiles;
+    /** Array of floor tiles. */
+    private ArrayList<TETile> floors = new ArrayList<>();
+    /** Rooms. */
+    private ArrayList<Area> allTiny;
+    /** Lantern coordinates. */
+    private int lanternX;
+    private int lanternY;
 
     /** Creates Area. */
     public Area(int x, int y, int w, int l) {
@@ -55,9 +63,17 @@ public class Area {
         this.length = l;
         this.width = w;
         this.solidTiles = new HashSet<>();
+        this.allTiny = new ArrayList<>();
         solidTiles.add(Tileset.BASIC_WALL);
         solidTiles.add(Tileset.DIM_LANTERN);
         solidTiles.add(Tileset.LIT_LANTERN);
+        floors.add(Tileset.LIT_ONE);
+        floors.add(Tileset.BASE);
+        floors.add(Tileset.DIM_ONE);
+        floors.add(Tileset.DIM_TWO);
+        floors.add(Tileset.DIM_THREE);
+        floors.add(Tileset.DIM_FOUR);
+        floors.add(Tileset.DIM_FIVE);
     }
 
     /** Splits the area into two, assigns child1 & child2 to the split areas. */
@@ -124,7 +140,7 @@ public class Area {
         }
         bigBoy.makeRooms(world, gen);
     }
-    /** Puts rooms inside all our areas for BIGBOI*/
+    /** Puts rooms inside all our areas for BIGBOI; also puts one lantern which lights the room */
     private void makeRooms(TETile[][] world, Random gen) {
         //fill the inside with floor
         if (this.child1 != null || this.child2 != null) {
@@ -155,15 +171,55 @@ public class Area {
             this.x2 = this.x1 + Math.abs(tempX1 - tempX2);
             this.y1 = Math.min(tempY1, tempY2);
             this.y2 = this.y1 + Math.abs(tempY1 - tempY2);
+            // Create lantern in random (not (x1, y1) || (x2, y2))
+            this.lanternX = RandomUtils.uniform(gen, this.x1 + 1 , this.x2);
+            this.lanternY = RandomUtils.uniform(gen, this.y1 + 1, this.y2);
             for (int i = this.x1; i <= this.x2; i++) {
                 for (int j = this.y1; j <= this.y2; j++) {
+                    // if tile is # distance away from lantern, make it # tile
                     world[i][j] = FLOOR_TILE;
+                }
+            }
+            world[this.lanternX][this.lanternY] = Tileset.DIM_LANTERN;
+            // lightRoomOfLantern(world, this.x1, this.x2, this.y1, this.y2, this.lanternX, this.lanternY);
+        }
+    }
+
+    private void lightRoomOfLantern(TETile[][] world, int roomX1, int roomX2,
+                                    int roomY1, int roomY2, int lX, int lY) {
+        for (int i = roomX1; i <= roomX2; i++) {
+            for (int j = roomY1; j <= roomY2; j++) {
+                if (!(i == lX && j == lY)) {
+                    int distance = absoluteDist(i, j, lX, lY);
+                    world[i][j] = floors.get(Math.min(distance - 1, 6));
+                    if (world[i][j] == leeTile) {
+                        leeTile = floors.get(Math.min(distance - 1, 6));
+                    }
                 }
             }
         }
     }
+
+    /** makes all tiles in the room except the lantern now the darkest tile/shadow */
+    private void darkenRoomOfLantern(TETile[][] world, int roomX1, int roomX2,
+                                    int roomY1, int roomY2, int lX, int lY) {
+        for (int i = roomX1; i <= roomX2; i++) {
+            for (int j = roomY1; j <= roomY2; j++) {
+                if (!(i == lX && j == lY)) {
+                    world[i][j] = FLOOR_TILE;
+                    if (world[i][j] == leeTile) {
+                        leeTile = FLOOR_TILE;
+                    }
+                }
+            }
+        }
+    }
+
+    private int absoluteDist(int x, int y, int i, int j) {
+        return Math.max(Math.abs(x - i), Math.abs(y - j));
+    }
+
     private void connect4(TETile[][] world, Random gen) {
-        ArrayList<Area> allTiny = new ArrayList<Area>();
         for (Area rose : ALL_MIGHTY) {
             if (rose.child1 == null || rose.child2 == null) {
                 allTiny.add(rose);
@@ -237,14 +293,14 @@ public class Area {
         boolean yOverZero = y - 1 >= 0;
         boolean xBehindBorder = x + 1 < WORLD_WIDTH;
         boolean yBehindBorder = y + 1 < WORLD_LENGTH;
-        boolean botLeft = xOverZero && yOverZero && world[x - 1][y - 1] == FLOOR_TILE;
-        boolean botRight = xBehindBorder && yOverZero && world[x + 1][y - 1] == FLOOR_TILE;
-        boolean topLeft = xOverZero && yBehindBorder && world[x - 1][y + 1] == FLOOR_TILE;
-        boolean topRight = xBehindBorder && yBehindBorder && world[x + 1][y + 1] == FLOOR_TILE;
+        boolean botLeft = xOverZero && yOverZero && floors.contains(world[x - 1][y - 1]) ;
+        boolean botRight = xBehindBorder && yOverZero && floors.contains(world[x + 1][y - 1]);
+        boolean topLeft = xOverZero && yBehindBorder && floors.contains(world[x - 1][y + 1]);
+        boolean topRight = xBehindBorder && yBehindBorder && floors.contains(world[x + 1][y + 1]);
         return botLeft || botRight || topLeft || topRight;
     }
 
-    public TETile[][] generateWorld(long seed, String commands) {
+    public TETile[][] generateWorld(long seed) {
         Random gen = new Random(seed % Long.MAX_VALUE);
 
         // initialize tiles
@@ -262,42 +318,71 @@ public class Area {
                 if (world[x][y] == Tileset.NOTHING && neighborsIsFloor(x, y, world)) {
                     world[x][y] = Tileset.BASIC_WALL;
                 }
-                if (leeCount == 0 && world[x][y] == FLOOR_TILE) {
-                    // Maybe set some avatar object or variable to these coords
-                    world[x][y] = Tileset.LEE_SIN;
+                //creates Lee Sin
+                if (leeCount == 0 && floors.contains(world[x][y])) {
+                    this.leeTile = world[x][y]; // Saves tile where we want Lee Sin
+                    world[x][y] = Tileset.LEE_SIN; // Puts Lee Sin on tile
                     leeCount++;
                     leeX = x;
                     ogLeeX = x;
                     leeY = y;
                     ogLeeY = y;
-                    world[x + 1][y + 1] = Tileset.DIM_LANTERN;
                 }
             }
         }
         return world;
     }
 
-    private void changeLantern(TETile[][] world, boolean off) {
+    private void changeLantern(TETile[][] world, boolean turnOff) {
         TETile currentLantern = Tileset.DIM_LANTERN;
         TETile newLantern = Tileset.LIT_LANTERN;
-        if (off) {
+        if (turnOff) {
             currentLantern = Tileset.LIT_LANTERN;
             newLantern = Tileset.DIM_LANTERN;
+
         }
+        int lanX = leeX;
+        int lanY = leeY;
+        // If try to turn off unlit lantern or try to turn on lit lantern, coords off
         if (world[leeX + 1][leeY] == currentLantern) {
             world[leeX + 1][leeY] = newLantern;
+            lanX++;
         } else if (world[leeX - 1][leeY] == currentLantern) {
             world[leeX - 1][leeY] = newLantern;
+            lanX--;
         } else if (world[leeX][leeY + 1] == currentLantern) {
             world[leeX][leeY + 1] = newLantern;
+            lanY++;
         } else if (world[leeX][leeY - 1] == currentLantern) {
             world[leeX][leeY - 1] = newLantern;
+            lanY--;
+        }
+        if (lanX == leeX && lanY == leeY) {
+            return;
+        }
+        int roomX1 = 0;
+        int roomY1 = 0;
+        int roomX2 = 0;
+        int roomY2 = 0;
+        for (Area dab : allTiny) {
+            roomX1 = dab.x1;
+            roomX2 = dab.x2;
+            roomY1 = dab.y1;
+            roomY2 = dab.y2;
+            if (lanX == dab.lanternX  && lanY == dab.lanternY) {
+                break;
+            }
+        }
+        if (turnOff) {
+            darkenRoomOfLantern(world, roomX1, roomX2, roomY1, roomY2, lanX, lanY);
+        } else {
+            lightRoomOfLantern(world, roomX1, roomX2, roomY1, roomY2, lanX, lanY);
         }
     }
 
     public TETile[][] moveLee(String commands, TETile[][] world) {
         if (commands.length() > 0) {
-            world[leeX][leeY] = FLOOR_TILE;
+            world[leeX][leeY] = this.leeTile;
         }
         leeX = ogLeeX;
         leeY = ogLeeY;
@@ -333,6 +418,9 @@ public class Area {
                 default:
                     break;
             }
+        }
+        if (commands.length() > 0) {
+            leeTile = world[leeX][leeY];
         }
         world[leeX][leeY] = Tileset.LEE_SIN;
         return world;

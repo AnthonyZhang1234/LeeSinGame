@@ -58,9 +58,9 @@ public class Tileset {
     public static final TETile DIM_FIVE = new TETile('F', Color.black, Color.black,
             "floor", "lit_floor_m_five.png");
     public static final TETile DIM_LANTERN = new TETile('F', Color.black, Color.black,
-            "floor", "dim_lantern.png");
+            "unlit lantern", "dim_lantern.png");
     public static final TETile LIT_LANTERN = new TETile('F', Color.black, Color.black,
-            "floor", "lit_lantern.png");
+            "lit lantern", "lit_lantern.png");
 }
 
 
