@@ -84,7 +84,7 @@ public class Engine {
         int x = (int) StdDraw.mouseX();
         int y = (int) StdDraw.mouseY();
         if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT - 1) {
-            TETile hudTile = world[(int) x][(int) y];
+            TETile hudTile = world[x][y];
             StdDraw.text(5, HEIGHT - 1, hudTile.description());
             StdDraw.show();
         }
@@ -212,19 +212,19 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
-        //        if (input.toLowerCase().charAt(0) == 'l') { // for AG
-        //            input = readContentsAsString(join(CWD, "save.txt")) + input; // for AG
-        //        } // for AG
+        if (input.toLowerCase().charAt(0) == 'l') { // for AG
+            input = readContentsAsString(join(CWD, "save.txt")) + input; // for AG
+        } // for AG
         int sPos = input.toLowerCase().indexOf('s');
         long seed = Long.parseLong(input.substring(1, sPos));
-        String commands = input.substring(sPos + 1); 
+        String commands = input.substring(sPos + 1);
         if (bigBoyNotCreated) {
             bigBoy = new Area(0, 0, WIDTH, HEIGHT);
             bigBoyNotCreated = false;
             finalWorldFrame = bigBoy.generateWorld(seed);
         }
         finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame);
-        // handleQuitCase(input, true); // for AG
+        handleQuitCase(input, true); // for AG
         return finalWorldFrame;
     }
 }

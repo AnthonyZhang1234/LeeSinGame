@@ -301,7 +301,7 @@ public class Area {
     }
 
     public TETile[][] generateWorld(long seed) {
-        Random gen = new Random(seed % Long.MAX_VALUE);
+        Random gen = new Random(seed);
 
         // initialize tiles
         TETile[][] world = new TETile[WORLD_WIDTH][WORLD_LENGTH];
@@ -409,7 +409,7 @@ public class Area {
                         this.leeX++;
                     }
                     break;
-                case 'l':
+                case 'p':
                     changeLantern(world, false);
                     break;
                 case 'o':
