@@ -152,9 +152,10 @@ public class Engine {
                             drawSeed();
                             break;
                         case 'l':
-                            input = readContentsAsString(join(CWD, "save.txt"));
+                            input = "load" + readContentsAsString(join(CWD, "save.txt"));
                             input += typed;
                             count = updateWorld(input, count);
+                            input = input.substring(4);
                             break;
                         case 'q':
                             System.exit(0);
@@ -216,6 +217,11 @@ public class Engine {
         //        if (input.toLowerCase().charAt(0) == 'l') { // for AG
         //            input = readContentsAsString(join(CWD, "save.txt")) + input; // for AG
         //        } // for AG
+        boolean load = false;
+        if (input.length() > 4 && input.substring(0, 4).equals("load")) {
+            input = input.substring(4);
+            load = true;
+        }
         int sPos = input.toLowerCase().indexOf('s');
         long seed = Long.parseLong(input.substring(1, sPos));
         String commands = input.substring(sPos + 1);
@@ -224,7 +230,7 @@ public class Engine {
             bigBoyNotCreated = false;
             finalWorldFrame = bigBoy.generateWorld(seed);
         }
-        finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame, ter);
+        finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame, ter, load);
         // handleQuitCase(input, true); // for AG
         return finalWorldFrame;
     }

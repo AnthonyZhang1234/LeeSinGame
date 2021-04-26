@@ -411,8 +411,8 @@ public class Area {
         }
     }
 
-    public TETile[][] moveLee(String commands, TETile[][] world, TERenderer ter) {
-        // ISSUE: When loading, this command is run once, so cursed tiles aren't reinstated
+    public TETile[][] moveLee(String commands, TETile[][] world, TERenderer ter, boolean load) {
+        // CHECK EVERYTHING AGAIN AFTER CREATIVE ADDITIONS 
         if (commands.length() > 0) {
             if (this.cursed) {
                 world[leeX][leeY] = CURSED_TILE;
@@ -424,28 +424,38 @@ public class Area {
         int lastLeeY = leeY;
         leeX = ogLeeX;
         leeY = ogLeeY;
-        // Attempted already: Put curse check in this loop, it breaks normal gameplay
-        // Did above and alse set this.curse = false at the end of the loop, nothing happens
         for (int i = 0; i < commands.length(); i++) {
             char move = commands.toLowerCase().charAt(i);
             switch (move) {
                 case 'w':
                     if (!this.solidTiles.contains(world[leeX][leeY + 1])) {
+                        if (load && this.cursed) {
+                            world[leeX][leeY] = CURSED_TILE;
+                        }
                         this.leeY++;
                     }
                     break;
                 case 'a':
                     if (!this.solidTiles.contains(world[leeX - 1][leeY])) {
+                        if (load && this.cursed) {
+                            world[leeX][leeY] = CURSED_TILE;
+                        }
                         this.leeX--;
                     }
                     break;
                 case 's':
                     if (!this.solidTiles.contains(world[leeX][leeY - 1])) {
+                        if (load && this.cursed) {
+                            world[leeX][leeY] = CURSED_TILE;
+                        }
                         this.leeY--;
                     }
                     break;
                 case 'd':
                     if (!this.solidTiles.contains(world[leeX + 1][leeY])) {
+                        if (load && this.cursed) {
+                            world[leeX][leeY] = CURSED_TILE;
+                        }
                         this.leeX++;
                     }
                     break;
