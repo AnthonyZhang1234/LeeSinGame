@@ -459,6 +459,19 @@ public class Area {
         }
     }
 
+    private char invertChar(char c) {
+        if (c == 'w') {
+            return 's';
+        } else if (c == 's') {
+            return 'w';
+        } else if (c == 'a') {
+            return 'd';
+        } else if (c == 'd') {
+            return 'a';
+        }
+        return c;
+    }
+
     public TETile[][] moveLee(String commands, TETile[][] world, TERenderer ter, boolean load) {
         // CHECK EVERYTHING AGAIN AFTER CREATIVE ADDITIONS
         if (commands.length() > 0) {
@@ -475,15 +488,7 @@ public class Area {
         for (int i = 0; i < commands.length(); i++) {
             char move = commands.toLowerCase().charAt(i);
             if (this.confusedIndex != -1 && i >= this.confusedIndex) {
-                if (move == 'w') {
-                    move = 's';
-                } else if (move == 's') {
-                    move = 'w';
-                } else if (move == 'a') {
-                    move = 'd';
-                } else if (move == 'd') {
-                    move = 'a';
-                }
+                move = invertChar(move);
             }
             switch (move) {
                 case 'w':
