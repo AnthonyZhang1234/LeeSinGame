@@ -226,8 +226,6 @@ public class Engine {
 
         finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame);
         handleQuitCase(input);
-        ter.initialize(WIDTH, HEIGHT);
-        ter.renderFrame(finalWorldFrame);
         return finalWorldFrame;
     }
 }
