@@ -210,6 +210,10 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
+        if (input.toLowerCase().charAt(0) == 'l') {
+            input = readContentsAsString(join(SAVES, "save")) + input;
+        }
+        System.out.println(input);
         int sPos = input.toLowerCase().indexOf('s');
         long seed = Long.parseLong(input.substring(1, sPos));
         String commands = input.substring(sPos + 1);
@@ -221,7 +225,9 @@ public class Engine {
         }
 
         finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame);
-
+        handleQuitCase(input);
+        ter.initialize(WIDTH, HEIGHT);
+        ter.renderFrame(finalWorldFrame);
         return finalWorldFrame;
     }
 }
