@@ -1,6 +1,5 @@
 package byow.Core;
 
-import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
@@ -28,9 +27,9 @@ public class Area {
     private int length;
     /** Indicates the width of the area. */
     private int width;
-    /** Indicates bottom left x-coordinate. */
+    /** Indicates bottom left x-coordinate of the Area. */
     private int xPos;
-    /** Indicates bottom left y-coordinate. */
+    /** Indicates bottom left y-coordinate of the Area. */
     private int yPos;
     /** First Child. */
     private Area child1;
@@ -64,9 +63,9 @@ public class Area {
         //if length is 35% larger than width, give the area a tight belt
         //if the area square asf, do nothin lul
         boolean chopHorizontal = RandomUtils.uniform(gen) > 0.5;
-        if (this.width > this.length && (double)this.width / this.length >= 1.35) {
+        if (this.width > this.length && (double) this.width / this.length >= 1.35) {
             chopHorizontal = false;
-        } else if (this.length > this.width && (double)this.length / this.width >= 1.35) {
+        } else if (this.length > this.width && (double) this.length / this.width >= 1.35) {
             chopHorizontal = true;
         }
         // Assign max leaf area size
@@ -125,29 +124,31 @@ public class Area {
         if (this.child1 != null || this.child2 != null) {
             if (this.child1 != null) {
                 this.child1.makeRooms(world, gen);
-            } if (this.child2 != null) {
+            }
+            if (this.child2 != null) {
                 this.child2.makeRooms(world, gen);
             }
         } else {
-            int x1 = 0;
-            int y1 = 0;
-            int x2 = 0;
-            int y2 = 0;
+            int tempX1 = 0;
+            int tempY1 = 0;
+            int tempX2 = 0;
+            int tempY2 = 0;
             boolean notFarEnuf = true;
-            while(notFarEnuf) {
-                x1 = RandomUtils.uniform(gen, this.xPos + 2, this.xPos + this.width - 2);
-                x2 = RandomUtils.uniform(gen, this.xPos + 2, this.xPos + this.width - 2);
-                y1 = RandomUtils.uniform(gen, this.yPos + 2, this.yPos + this.length - 2);
-                y2 = RandomUtils.uniform(gen, this.yPos + 2, this.yPos + this.length - 2);
-                if (x1 > 0 && x2 > 0 && x1 < WORLD_WIDTH - 1 && x2 < WORLD_WIDTH - 1
-                        && y1 > 0 && y2 > 0 && y1 < WORLD_LENGTH - 1 && y2 < WORLD_LENGTH - 1) {
-                    notFarEnuf = Math.abs(x1 - x2) < 2 || Math.abs(y1 - y2) < 2;
+            while (notFarEnuf) {
+                tempX1 = RandomUtils.uniform(gen, this.xPos + 2, this.xPos + this.width - 2);
+                tempX2 = RandomUtils.uniform(gen, this.xPos + 2, this.xPos + this.width - 2);
+                tempY1 = RandomUtils.uniform(gen, this.yPos + 2, this.yPos + this.length - 2);
+                tempY2 = RandomUtils.uniform(gen, this.yPos + 2, this.yPos + this.length - 2);
+                if (tempX1 > 0 && tempX2 > 0 && tempX1 < WORLD_WIDTH - 1
+                        && tempX2 < WORLD_WIDTH - 1 && tempY1 > 0 && tempY2 > 0
+                        && tempY1 < WORLD_LENGTH - 1 && tempY2 < WORLD_LENGTH - 1) {
+                    notFarEnuf = Math.abs(tempX1 - tempX2) < 2 || Math.abs(tempY1 - tempY2) < 2;
                 }
             }
-            this.x1 = Math.min(x1, x2);
-            this.x2 = this.x1 + Math.abs(x1 - x2);
-            this.y1 = Math.min(y1, y2);
-            this.y2 = this.y1 + Math.abs(y1 - y2);
+            this.x1 = Math.min(tempX1, tempX2);
+            this.x2 = this.x1 + Math.abs(tempX1 - tempX2);
+            this.y1 = Math.min(tempY1, tempY2);
+            this.y2 = this.y1 + Math.abs(tempY1 - tempY2);
             for(int i = this.x1; i <= this.x2; i++) {
                 for (int j = this.y1; j <= this.y2; j++) {
                     world[i][j] = FLOOR_TILE;
@@ -236,16 +237,16 @@ public class Area {
 
         // initialize tiles
         TETile[][] world = new TETile[WORLD_WIDTH][WORLD_LENGTH];
-        for (int x = 0; x < WORLD_WIDTH; x ++) {
-            for (int y = 0; y < WORLD_LENGTH; y ++) {
+        for (int x = 0; x < WORLD_WIDTH; x++) {
+            for (int y = 0; y < WORLD_LENGTH; y++) {
                 world[x][y] = Tileset.NOTHING;
             }
         }
         makeAreas(world, gen);
         connect4(world, gen);
         int leeCount = 0;
-        for (int x = 0; x < WORLD_WIDTH; x ++) {
-            for (int y = 0; y < WORLD_LENGTH; y ++) {
+        for (int x = 0; x < WORLD_WIDTH; x++) {
+            for (int y = 0; y < WORLD_LENGTH; y++) {
                 if (world[x][y] == Tileset.NOTHING && neighborsIsFloor(x, y, world)) {
                     world[x][y] = Tileset.BASIC_WALL;
                 }
@@ -271,7 +272,7 @@ public class Area {
         leeY = ogLeeY;
         for (int i = 0; i < commands.length(); i++) {
             char move = commands.toLowerCase().charAt(i);
-            switch(move) {
+            switch (move) {
                 case 'w':
                     if (world[leeX][leeY + 1] != Tileset.BASIC_WALL) {
                         this.leeY++;
@@ -291,6 +292,8 @@ public class Area {
                     if (world[leeX + 1][leeY] != Tileset.BASIC_WALL) {
                         this.leeX++;
                     }
+                    break;
+                default:
                     break;
             }
         }
