@@ -114,7 +114,7 @@ public class Engine {
     /**
      * Method that handles the scenario where the player types ':q' to quit the game.
      */
-    private void handleQuitCase(String input) {
+    public void handleQuitCase(String input) {
         String possQuit = input.toLowerCase().substring(0, input.length() - 2);
         if (input.toLowerCase().substring(input.length() - 2).equals(":q")) {
             File saveFile = join(SAVES, "save");
