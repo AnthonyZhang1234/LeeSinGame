@@ -7,13 +7,21 @@ import byow.TileEngine.Tileset;
 import java.util.Random;
 import java.util.*;
 
+/**
+ * @source BSP Algorithm
+ * Generates Areas via a variant of the BSP algorithm, and randomly creates rectangular
+ * rooms via random 2 points selected to act as corners of the rooms. Then connects
+ * the rooms through hallways that connect the bottom left corner of one room to the
+ * top right corner of another room.
+ */
 public class Area {
 
     private final int WORLD_WIDTH = Engine.WIDTH;
-    private final int WORLD_LENGTH = Engine.HEIGHT;
+    private final int WORLD_LENGTH = Engine.HEIGHT - 1;
     private final int minSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 3;
     private final int maxSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 2;
     private final ArrayList<Area> ALL_MIGHTY = new ArrayList<Area>();
+    private final TETile FLOOR_TILE = Tileset.BASIC_FLOOR_3;
 
 
     /** Indicates the length of the area. */
@@ -33,7 +41,11 @@ public class Area {
     private int x2;
     private int y1;
     private int y2;
-
+    /** Lee's coordinates. */
+    private int leeX;
+    private int ogLeeX;
+    private int leeY;
+    private int ogLeeY;
 
     /** Creates Area. */
     public Area(int x, int y, int w, int l) {
@@ -138,7 +150,7 @@ public class Area {
             this.y2 = this.y1 + Math.abs(y1 - y2);
             for(int i = this.x1; i <= this.x2; i++) {
                 for (int j = this.y1; j <= this.y2; j++) {
-                    world[i][j] = Tileset.FLOOR;
+                    world[i][j] = FLOOR_TILE;
                 }
             }
         }
@@ -175,33 +187,33 @@ public class Area {
         if (room1y > room2y) {  // Right-Down or Down-Right
             if (el) {
                 for (int x = room1x; x <= room2x; x++) {
-                    world[x][room1y] = Tileset.FLOOR;
+                    world[x][room1y] = FLOOR_TILE;
                 }
                 for (int y = room1y; y >= room2y; y--) {
-                    world[room2x][y] = Tileset.FLOOR;
+                    world[room2x][y] = FLOOR_TILE;
                 }
             } else {
                 for (int y = room1y; y >= room2y; y--) {
-                    world[room1x][y] = Tileset.FLOOR;
+                    world[room1x][y] = FLOOR_TILE;
                 }
                 for (int x = room1x; x <= room2x; x++) {
-                    world[x][room2y] = Tileset.FLOOR;
+                    world[x][room2y] = FLOOR_TILE;
                 }
             }
         } else {                // Right-Up or Up-Right
             if (el) {
                 for (int x = room1x; x <= room2x; x++) {
-                    world[x][room1y] = Tileset.FLOOR;
+                    world[x][room1y] = FLOOR_TILE;
                 }
                 for (int y = room1y; y <= room2y; y++) {
-                    world[room2x][y] = Tileset.FLOOR;
+                    world[room2x][y] = FLOOR_TILE;
                 }
             } else {
                 for (int y = room1y; y <= room2y; y++) {
-                    world[room1x][y] = Tileset.FLOOR;
+                    world[room1x][y] = FLOOR_TILE;
                 }
                 for (int x = room1x; x <= room2x; x++) {
-                    world[x][room2y] = Tileset.FLOOR;
+                    world[x][room2y] = FLOOR_TILE;
                 }
             }
         }
@@ -212,18 +224,15 @@ public class Area {
         boolean yOverZero = y - 1 >= 0;
         boolean xBehindBorder = x + 1 < WORLD_WIDTH;
         boolean yBehindBorder = y + 1 < WORLD_LENGTH;
-        boolean botLeft = xOverZero && yOverZero && world[x - 1][y - 1] == Tileset.FLOOR;
-        boolean botRight = xBehindBorder && yOverZero && world[x + 1][y - 1] == Tileset.FLOOR;
-        boolean topLeft = xOverZero && yBehindBorder && world[x - 1][y + 1] == Tileset.FLOOR;
-        boolean topRight = xBehindBorder && yBehindBorder && world[x + 1][y + 1] == Tileset.FLOOR;
+        boolean botLeft = xOverZero && yOverZero && world[x - 1][y - 1] == FLOOR_TILE;
+        boolean botRight = xBehindBorder && yOverZero && world[x + 1][y - 1] == FLOOR_TILE;
+        boolean topLeft = xOverZero && yBehindBorder && world[x - 1][y + 1] == FLOOR_TILE;
+        boolean topRight = xBehindBorder && yBehindBorder && world[x + 1][y + 1] == FLOOR_TILE;
         return botLeft || botRight || topLeft || topRight;
     }
 
-    public TETile[][] generateWorld(long seed, TERenderer ter) {
-        // long SEED = 9223372036854775806;
-        final Random gen = new Random(seed % Long.MAX_VALUE);
-        // TERenderer ter = new TERenderer();
-        // ter.initialize(WORLD_WIDTH, WORLD_LENGTH);
+    public TETile[][] generateWorld(long seed, String commands) {
+        Random gen = new Random(seed % Long.MAX_VALUE);
 
         // initialize tiles
         TETile[][] world = new TETile[WORLD_WIDTH][WORLD_LENGTH];
@@ -234,14 +243,58 @@ public class Area {
         }
         makeAreas(world, gen);
         connect4(world, gen);
+        int leeCount = 0;
         for (int x = 0; x < WORLD_WIDTH; x ++) {
             for (int y = 0; y < WORLD_LENGTH; y ++) {
                 if (world[x][y] == Tileset.NOTHING && neighborsIsFloor(x, y, world)) {
-                    world[x][y] = Tileset.WALL;
+                    world[x][y] = Tileset.BASIC_WALL;
+                }
+                if (leeCount == 0 && world[x][y] == FLOOR_TILE) {
+                    // Maybe set some avatar object or variable to these coords
+                    world[x][y] = Tileset.LEE_SIN;
+                    leeCount++;
+                    leeX = x;
+                    ogLeeX = x;
+                    leeY = y;
+                    ogLeeY = y;
                 }
             }
         }
-        // ter.renderFrame(world);
+        return world;
+    }
+
+    public TETile[][] moveLee(String commands, TETile[][] world) {
+        if (commands.length() > 0) {
+            world[leeX][leeY] = FLOOR_TILE;
+        }
+        leeX = ogLeeX;
+        leeY = ogLeeY;
+        for (int i = 0; i < commands.length(); i++) {
+            char move = commands.toLowerCase().charAt(i);
+            switch(move) {
+                case 'w':
+                    if (world[leeX][leeY + 1] != Tileset.BASIC_WALL) {
+                        this.leeY++;
+                    }
+                    break;
+                case 'a':
+                    if (world[leeX - 1][leeY] != Tileset.BASIC_WALL) {
+                        this.leeX--;
+                    }
+                    break;
+                case 's':
+                    if (world[leeX][leeY - 1] != Tileset.BASIC_WALL) {
+                        this.leeY--;
+                    }
+                    break;
+                case 'd':
+                    if (world[leeX + 1][leeY] != Tileset.BASIC_WALL) {
+                        this.leeX++;
+                    }
+                    break;
+            }
+        }
+        world[leeX][leeY] = Tileset.LEE_SIN;
         return world;
     }
 }

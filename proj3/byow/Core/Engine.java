@@ -2,18 +2,183 @@ package byow.Core;
 
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import edu.princeton.cs.introcs.StdDraw;
+
+import java.io.*;
+import java.util.*;
+import static byow.Core.Utils.*;
+
+import java.awt.*;
 
 public class Engine {
+    /** Game renderer. */
     TERenderer ter = new TERenderer();
-    /* Feel free to change the width and height. */
+    /** Dimensions of the game world. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+    /** Dimensions of the home menu. */
+    public static final int MENU_WIDTH = 40;
+    public static final int MENU_HEIGHT = 40;
+    /** Helper variable storing number characters. */
+    public static final String NUMBERS = "0123456789";
+    /** Current Working Directory. */
+    private static final File CWD = new File(System.getProperty("user.dir"));
+    /** Folder that holds save files. */
+    private static final File SAVES = join(CWD, "saves");
+    /** Helper variable that determines if the world has been created. */
+    private boolean bigBoyNotCreated = true;
+    /** Current game world. */
+    private Area bigBoy;
+    /** Tiles of the current game world. */
+    private TETile[][] finalWorldFrame = null;
+
+    /**
+     * Method that displays what the user is typing.
+     */
+    public void drawFrame(String s) {
+        // draws the menu;
+        Font font = new Font("Monaco", Font.BOLD, 15);
+        StdDraw.setFont(font);
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 2, s);
+        StdDraw.show();
+    }
+
+    /**
+     * Method that sustains the seed prompt while player inputs desired seed.
+     */
+    public void drawSeed() {
+        Font font = new Font("Monaco", Font.BOLD, 15);
+        StdDraw.setFont(font);
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4,
+                "Enter a number seed! Press (S) when satisfied!");
+        StdDraw.show();
+    }
+
+    /**
+     * Method that draws the home menu of the game.
+     */
+    public void drawMenu() {
+        Font font = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(font);
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4, "Best Game");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 2, "Press (N) to Start!");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 2 - 5, "Press (L) to Load Game!");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 2 - 10, "Press (Q) to Quit!");
+        StdDraw.show();
+    }
+
+    /**
+     * Method responsible for updating the HUD of the world based on players' mouse location.
+     */
+    public void drawHud(TETile[][] world) {
+        Font font = new Font("Monaco", Font.BOLD, 10);
+        StdDraw.setFont(font);
+        StdDraw.setPenColor(Color.BLACK);
+        StdDraw.filledRectangle(WIDTH / 2, HEIGHT - 1, WIDTH / 2, 0.5);
+        StdDraw.setPenColor(Color.WHITE);
+        int x = (int) StdDraw.mouseX();
+        int y = (int) StdDraw.mouseY();
+        if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT - 1) {
+            TETile hudTile = world[(int) x][(int) y];
+            StdDraw.text(5, HEIGHT - 1, hudTile.description());
+            StdDraw.show();
+        }
+    }
+
+    /**
+     * Helper method to turn chars into lowercase.
+     */
+    private char lowerCase(char c) {
+        String temp = "" + c;
+        return temp.toLowerCase().charAt(0);
+     }
+
+    /**
+     * Method to update the world whenever the user presses a key.
+     */
+     private int updateWorld(String input, int count) {
+         if (count == 0) {
+             ter.initialize(WIDTH, HEIGHT);
+             count++;
+         }
+         finalWorldFrame = interactWithInputString(input);
+         ter.renderFrame(finalWorldFrame);
+         return count;
+     }
+
+    /**
+     * Method that handles the scenario where the player types ':q' to quit the game.
+     */
+     private void handleQuitCase(String input) {
+         String possQuit = input.toLowerCase().substring(0, input.length() - 2);
+         if (input.toLowerCase().substring(input.length() - 2).equals(":q")) {
+             File saveFile = join(SAVES, "save");
+             writeContents(saveFile, possQuit);
+             System.exit(0);
+         }
+     }
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
      * including inputs from the main menu.
      */
     public void interactWithKeyboard() {
+        String input = "";
+        if (!SAVES.exists()) {
+            SAVES.mkdir();
+        }
+        ter.initialize(MENU_WIDTH, MENU_HEIGHT);
+        drawMenu();
+        int count = 0;
+        boolean inGame = false;
+        while (true) {
+            // this should run once you type some keys to be the seed
+            if (StdDraw.hasNextKeyTyped()) {
+                //when the user does not type n or s
+                char typed = lowerCase(StdDraw.nextKeyTyped());
+                if (input.length() == 0) {
+                    switch (typed) {
+                        case 'n':
+                            input += typed;
+                            StdDraw.clear(Color.BLACK);
+                            drawSeed();
+                            break;
+                        case 'l':
+                            input = readContentsAsString(join(SAVES, "save"));
+                            input += typed;
+                            count = updateWorld(input, count);
+                            break;
+                        case 'q':
+                            System.exit(0);
+                            break;
+                        default:
+                            continue;
+                    }
+                } else {
+                    if (!input.contains("s") && typed != 's') {
+                        //only reads the parts where the character a number to pass as a seed
+                        if (NUMBERS.indexOf(typed) >= 0) {
+                            input += typed;
+                            drawFrame(input.substring(1));
+                            drawSeed();
+                        }
+                    } else if (input.length() > 2) {
+                        inGame = true;
+                        input += typed;
+                        handleQuitCase(input);
+                        count = updateWorld(input, count);
+                    }
+                }
+            }
+            if (inGame) {
+                drawHud(finalWorldFrame);
+            }
+        }
     }
 
     /**
@@ -45,14 +210,18 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
+        int sPos = input.toLowerCase().indexOf('s');
+        long seed = Long.parseLong(input.substring(1, sPos));
+        String commands = input.substring(sPos + 1);
 
-        long seed = Long.parseLong(input.substring(1, input.length() - 1));
-        Area bigBoy = new Area(0, 0, WIDTH, HEIGHT);
+        if (bigBoyNotCreated) {
+            bigBoy = new Area(0, 0, WIDTH, HEIGHT);
+            bigBoyNotCreated = false;
+            finalWorldFrame = bigBoy.generateWorld(seed, commands);
+        }
 
-        ter.initialize(WIDTH, HEIGHT);
-        TETile[][] finalWorldFrame = bigBoy.generateWorld(seed, ter);
-        ter.renderFrame(finalWorldFrame);
+        finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame);
+
         return finalWorldFrame;
-        // return null;
     }
 }
