@@ -20,7 +20,7 @@ public class Area {
     private final int minSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 3;
     private final int maxSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 2;
     private final ArrayList<Area> ALL_MIGHTY = new ArrayList<Area>();
-    private final TETile FLOOR_TILE = Tileset.BASIC_FLOOR_3;
+    private final TETile FLOOR_TILE = Tileset.DIM_FIVE;
 
 
     /** Indicates the length of the area. */
@@ -45,6 +45,8 @@ public class Area {
     private int ogLeeX;
     private int leeY;
     private int ogLeeY;
+    /** Set holding solid tiles. */
+    private HashSet<TETile> solidTiles;
 
     /** Creates Area. */
     public Area(int x, int y, int w, int l) {
@@ -52,6 +54,10 @@ public class Area {
         this.yPos = y;
         this.length = l;
         this.width = w;
+        this.solidTiles = new HashSet<>();
+        solidTiles.add(Tileset.BASIC_WALL);
+        solidTiles.add(Tileset.DIM_LANTERN);
+        solidTiles.add(Tileset.LIT_LANTERN);
     }
 
     /** Splits the area into two, assigns child1 & child2 to the split areas. */
@@ -168,6 +174,12 @@ public class Area {
         }
     }
 
+    private void makeHallway(int x, int y, TETile[][] world) {
+        if (world[x][y] == Tileset.NOTHING) {
+            world[x][y] = FLOOR_TILE;
+        }
+    }
+
     private void hallwayHelper(Area a1, Area a2, TETile[][] world, Random gen) {
         boolean el = RandomUtils.uniform(gen) > 0.5;
         int room1x;
@@ -188,33 +200,33 @@ public class Area {
         if (room1y > room2y) {  // Right-Down or Down-Right
             if (el) {
                 for (int x = room1x; x <= room2x; x++) {
-                    world[x][room1y] = FLOOR_TILE;
+                    makeHallway(x, room1y, world);
                 }
                 for (int y = room1y; y >= room2y; y--) {
-                    world[room2x][y] = FLOOR_TILE;
+                    makeHallway(room2x, y, world);
                 }
             } else {
                 for (int y = room1y; y >= room2y; y--) {
-                    world[room1x][y] = FLOOR_TILE;
+                    makeHallway(room1x, y, world);
                 }
                 for (int x = room1x; x <= room2x; x++) {
-                    world[x][room2y] = FLOOR_TILE;
+                    makeHallway(x, room2y, world);
                 }
             }
         } else {                // Right-Up or Up-Right
             if (el) {
                 for (int x = room1x; x <= room2x; x++) {
-                    world[x][room1y] = FLOOR_TILE;
+                    makeHallway(x, room1y, world);
                 }
                 for (int y = room1y; y <= room2y; y++) {
-                    world[room2x][y] = FLOOR_TILE;
+                    makeHallway(room2x, y, world);
                 }
             } else {
                 for (int y = room1y; y <= room2y; y++) {
-                    world[room1x][y] = FLOOR_TILE;
+                    makeHallway(room1x, y, world);
                 }
                 for (int x = room1x; x <= room2x; x++) {
-                    world[x][room2y] = FLOOR_TILE;
+                    makeHallway(x, room2y, world);
                 }
             }
         }
@@ -258,10 +270,29 @@ public class Area {
                     ogLeeX = x;
                     leeY = y;
                     ogLeeY = y;
+                    world[x + 1][y + 1] = Tileset.DIM_LANTERN;
                 }
             }
         }
         return world;
+    }
+
+    private void changeLantern(TETile[][] world, boolean off) {
+        TETile currentLantern = Tileset.DIM_LANTERN;
+        TETile newLantern = Tileset.LIT_LANTERN;
+        if (off) {
+            currentLantern = Tileset.LIT_LANTERN;
+            newLantern = Tileset.DIM_LANTERN;
+        }
+        if (world[leeX + 1][leeY] == currentLantern) {
+            world[leeX + 1][leeY] = newLantern;
+        } else if (world[leeX - 1][leeY] == currentLantern) {
+            world[leeX - 1][leeY] = newLantern;
+        } else if (world[leeX][leeY + 1] == currentLantern) {
+            world[leeX][leeY + 1] = newLantern;
+        } else if (world[leeX][leeY - 1] == currentLantern) {
+            world[leeX][leeY - 1] = newLantern;
+        }
     }
 
     public TETile[][] moveLee(String commands, TETile[][] world) {
@@ -274,24 +305,30 @@ public class Area {
             char move = commands.toLowerCase().charAt(i);
             switch (move) {
                 case 'w':
-                    if (world[leeX][leeY + 1] != Tileset.BASIC_WALL) {
+                    if (!this.solidTiles.contains(world[leeX][leeY + 1])) {
                         this.leeY++;
                     }
                     break;
                 case 'a':
-                    if (world[leeX - 1][leeY] != Tileset.BASIC_WALL) {
+                    if (!this.solidTiles.contains(world[leeX - 1][leeY])) {
                         this.leeX--;
                     }
                     break;
                 case 's':
-                    if (world[leeX][leeY - 1] != Tileset.BASIC_WALL) {
+                    if (!this.solidTiles.contains(world[leeX][leeY - 1])) {
                         this.leeY--;
                     }
                     break;
                 case 'd':
-                    if (world[leeX + 1][leeY] != Tileset.BASIC_WALL) {
+                    if (!this.solidTiles.contains(world[leeX + 1][leeY])) {
                         this.leeX++;
                     }
+                    break;
+                case 'l':
+                    changeLantern(world, false);
+                    break;
+                case 'o':
+                    changeLantern(world, true);
                     break;
                 default:
                     break;

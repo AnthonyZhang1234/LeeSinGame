@@ -38,13 +38,29 @@ public class Tileset {
     public static final TETile LEE_SIN_2 = new TETile('E', Color.yellow, Color.black,
             "lee sin 2", "lee_sin2.png");
     public static final TETile BASIC_WALL = new TETile('W', Color.black, Color.black,
-            "basic wall", "basic_wall.png");
+            "wall", "basic_wall.png");
     public static final TETile BASIC_FLOOR = new TETile('F', Color.black, Color.black,
             "basic floor", "basic_floor.png");
     public static final TETile BASIC_FLOOR_2 = new TETile('F', Color.black, Color.black,
-            "basic floor 2", "basic_floor_2.png");
-    public static final TETile BASIC_FLOOR_3 = new TETile('F', Color.black, Color.black,
-            "basic floor 3", "basic_floor_3.png");
+            "floor", "basic_floor_2.png");
+    public static final TETile LIT_ONE = new TETile('F', Color.black, Color.black,
+            "floor", "lit_floor_p_one.png");
+    public static final TETile BASE = new TETile('F', Color.black, Color.black,
+            "floor", "basic_floor_3.png");
+    public static final TETile DIM_ONE = new TETile('F', Color.black, Color.black,
+            "floor", "lit_floor_m_one.png");
+    public static final TETile DIM_TWO = new TETile('F', Color.black, Color.black,
+            "floor", "lit_floor_m_two.png");
+    public static final TETile DIM_THREE = new TETile('F', Color.black, Color.black,
+            "floor", "lit_floor_m_three.png");
+    public static final TETile DIM_FOUR = new TETile('F', Color.black, Color.black,
+            "floor", "lit_floor_m_four.png");
+    public static final TETile DIM_FIVE = new TETile('F', Color.black, Color.black,
+            "floor", "lit_floor_m_five.png");
+    public static final TETile DIM_LANTERN = new TETile('F', Color.black, Color.black,
+            "floor", "dim_lantern.png");
+    public static final TETile LIT_LANTERN = new TETile('F', Color.black, Color.black,
+            "floor", "lit_lantern.png");
 }
 
 

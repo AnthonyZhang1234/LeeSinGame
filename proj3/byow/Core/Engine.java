@@ -212,21 +212,20 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
-        if (input.toLowerCase().charAt(0) == 'l') {
-            input = readContentsAsString(join(CWD, "save.txt")) + input;
-        }
+        //        if (input.toLowerCase().charAt(0) == 'l') { // for AG
+        //            input = readContentsAsString(join(CWD, "save.txt")) + input; // for AG
+        //        } // for AG
         int sPos = input.toLowerCase().indexOf('s');
         long seed = Long.parseLong(input.substring(1, sPos));
         String commands = input.substring(sPos + 1);
-
         if (bigBoyNotCreated) {
             bigBoy = new Area(0, 0, WIDTH, HEIGHT);
             bigBoyNotCreated = false;
             finalWorldFrame = bigBoy.generateWorld(seed, commands);
         }
-
+        System.out.println(input);
         finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame);
-        handleQuitCase(input, true);
+        // handleQuitCase(input, true); // for AG
         return finalWorldFrame;
     }
 }
