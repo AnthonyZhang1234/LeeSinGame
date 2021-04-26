@@ -224,6 +224,9 @@ public class Engine {
         }
 
         finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame);
+        if (!SAVES.exists()) {
+            SAVES.mkdir();
+        }
         handleQuitCase(input);
         return finalWorldFrame;
     }
