@@ -2,6 +2,7 @@ package byow.Core;
 
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.io.*;
@@ -65,7 +66,7 @@ public class Engine {
         StdDraw.setFont(font);
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.clear(Color.BLACK);
-        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4, "Best Game");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4, "Lee Sin's Adventure");
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 2, "Press (N) to Start!");
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 2 - 5, "Press (L) to Load Game!");
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 2 - 10, "Press (Q) to Quit!");
@@ -169,7 +170,7 @@ public class Engine {
                             drawFrame(input.substring(1));
                             drawSeed();
                         }
-                    } else if (input.length() > 2) {
+                    } else if (input.length() > 1) {
                         inGame = true;
                         input += typed;
                         handleQuitCase(input, false);
@@ -223,7 +224,7 @@ public class Engine {
             bigBoyNotCreated = false;
             finalWorldFrame = bigBoy.generateWorld(seed);
         }
-        finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame);
+        finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame, ter);
         // handleQuitCase(input, true); // for AG
         return finalWorldFrame;
     }

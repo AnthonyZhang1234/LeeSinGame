@@ -1,8 +1,11 @@
 package byow.Core;
 
+import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import edu.princeton.cs.introcs.StdDraw;
 
+import java.awt.*;
 import java.util.Random;
 import java.util.*;
 
@@ -21,6 +24,7 @@ public class Area {
     private final int maxSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 2;
     private final ArrayList<Area> ALL_MIGHTY = new ArrayList<Area>();
     private final TETile FLOOR_TILE = Tileset.DIM_FIVE;
+    private final TETile CURSED_TILE = Tileset.FLAME;
 
 
     /** Indicates the length of the area. */
@@ -55,6 +59,10 @@ public class Area {
     /** Lantern coordinates. */
     private int lanternX;
     private int lanternY;
+    /** Devil's lantern. */
+    private boolean devil;
+    /** Devil's curse. */
+    private boolean cursed;
 
     /** Creates Area. */
     public Area(int x, int y, int w, int l) {
@@ -64,6 +72,8 @@ public class Area {
         this.width = w;
         this.solidTiles = new HashSet<>();
         this.allTiny = new ArrayList<>();
+        this.devil = false;
+        this.cursed = false;
         solidTiles.add(Tileset.BASIC_WALL);
         solidTiles.add(Tileset.DIM_LANTERN);
         solidTiles.add(Tileset.LIT_LANTERN);
@@ -140,6 +150,7 @@ public class Area {
         }
         bigBoy.makeRooms(world, gen);
     }
+
     /** Puts rooms inside all our areas for BIGBOI; also puts one lantern which lights the room */
     private void makeRooms(TETile[][] world, Random gen) {
         //fill the inside with floor
@@ -188,7 +199,7 @@ public class Area {
                                     int roomY1, int roomY2, int lX, int lY) {
         for (int i = roomX1; i <= roomX2; i++) {
             for (int j = roomY1; j <= roomY2; j++) {
-                if (!(i == lX && j == lY)) {
+                if (!(i == lX && j == lY) && world[i][j] != CURSED_TILE) {
                     int distance = absoluteDist(i, j, lX, lY);
                     world[i][j] = floors.get(Math.min(distance - 1, 6));
                     if (world[i][j] == leeTile) {
@@ -204,7 +215,7 @@ public class Area {
                                     int roomY1, int roomY2, int lX, int lY) {
         for (int i = roomX1; i <= roomX2; i++) {
             for (int j = roomY1; j <= roomY2; j++) {
-                if (!(i == lX && j == lY)) {
+                if (!(i == lX && j == lY) && world[i][j] != CURSED_TILE) {
                     world[i][j] = FLOOR_TILE;
                     if (world[i][j] == leeTile) {
                         leeTile = FLOOR_TILE;
@@ -329,6 +340,9 @@ public class Area {
                 }
             }
         }
+        // Choose a lantern to be the devil's lantern
+        int devilInt = RandomUtils.uniform(gen, allTiny.size());
+        allTiny.get(devilInt).devil = true;
         return world;
     }
 
@@ -338,7 +352,6 @@ public class Area {
         if (turnOff) {
             currentLantern = Tileset.LIT_LANTERN;
             newLantern = Tileset.DIM_LANTERN;
-
         }
         int lanX = leeX;
         int lanY = leeY;
@@ -369,6 +382,9 @@ public class Area {
             roomY1 = dab.y1;
             roomY2 = dab.y2;
             if (lanX == dab.lanternX  && lanY == dab.lanternY) {
+                if (dab.devil) {
+                    this.cursed = true;
+                }
                 break;
             }
         }
@@ -379,12 +395,37 @@ public class Area {
         }
     }
 
-    public TETile[][] moveLee(String commands, TETile[][] world) {
-        if (commands.length() > 0) {
-            world[leeX][leeY] = this.leeTile;
+    public void gameOver(TETile[][] world, int x, int y, TERenderer ter) {
+        if (world[leeX][leeY] == CURSED_TILE) {
+            world[x][y] = Tileset.DEAD_LEE;
+            ter.renderFrame(world);
+            StdDraw.pause(1000);
+            Font font = new Font("Monaco", Font.BOLD, 30);
+            StdDraw.setFont(font);
+            StdDraw.setPenColor(Color.WHITE);
+            StdDraw.clear(Color.BLACK);
+            StdDraw.text(WORLD_WIDTH / 2, WORLD_LENGTH / 2, "Game Over!");
+            StdDraw.show();
+            StdDraw.pause(5000);
+            System.exit(0);
         }
+    }
+
+    public TETile[][] moveLee(String commands, TETile[][] world, TERenderer ter) {
+        // ISSUE: When loading, this command is run once, so cursed tiles aren't reinstated
+        if (commands.length() > 0) {
+            if (this.cursed) {
+                world[leeX][leeY] = CURSED_TILE;
+            } else {
+                world[leeX][leeY] = this.leeTile;
+            }
+        }
+        int lastLeeX = leeX;
+        int lastLeeY = leeY;
         leeX = ogLeeX;
         leeY = ogLeeY;
+        // Attempted already: Put curse check in this loop, it breaks normal gameplay
+        // Did above and alse set this.curse = false at the end of the loop, nothing happens
         for (int i = 0; i < commands.length(); i++) {
             char move = commands.toLowerCase().charAt(i);
             switch (move) {
@@ -420,6 +461,9 @@ public class Area {
         }
         if (commands.length() > 0) {
             leeTile = world[leeX][leeY];
+        }
+        if (!(lastLeeX == leeX && lastLeeY == leeY)) {
+            gameOver(world, leeX, leeY, ter);
         }
         world[leeX][leeY] = Tileset.LEE_SIN;
         return world;
