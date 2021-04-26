@@ -117,7 +117,7 @@ public class Engine {
     public void handleQuitCase(String input) {
         String possQuit = input.toLowerCase().substring(0, input.length() - 2);
         if (input.toLowerCase().substring(input.length() - 2).equals(":q")) {
-            File saveFile = join(SAVES, "save");
+            File saveFile = join(SAVES, "save.txt");
             writeContents(saveFile, possQuit);
             System.exit(0);
         }
@@ -149,7 +149,7 @@ public class Engine {
                             drawSeed();
                             break;
                         case 'l':
-                            input = readContentsAsString(join(SAVES, "save"));
+                            input = readContentsAsString(join(SAVES, "save.txt"));
                             input += typed;
                             count = updateWorld(input, count);
                             break;
