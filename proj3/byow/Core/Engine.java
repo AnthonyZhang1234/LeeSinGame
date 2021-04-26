@@ -96,32 +96,32 @@ public class Engine {
     private char lowerCase(char c) {
         String temp = "" + c;
         return temp.toLowerCase().charAt(0);
-     }
+    }
 
     /**
      * Method to update the world whenever the user presses a key.
      */
-     private int updateWorld(String input, int count) {
-         if (count == 0) {
-             ter.initialize(WIDTH, HEIGHT);
-             count++;
-         }
-         finalWorldFrame = interactWithInputString(input);
-         ter.renderFrame(finalWorldFrame);
-         return count;
+    private int updateWorld(String input, int count) {
+        if (count == 0) {
+            ter.initialize(WIDTH, HEIGHT);
+            count++;
+        }
+        finalWorldFrame = interactWithInputString(input);
+        ter.renderFrame(finalWorldFrame);
+        return count;
      }
 
     /**
      * Method that handles the scenario where the player types ':q' to quit the game.
      */
-     private void handleQuitCase(String input) {
-         String possQuit = input.toLowerCase().substring(0, input.length() - 2);
-         if (input.toLowerCase().substring(input.length() - 2).equals(":q")) {
-             File saveFile = join(SAVES, "save");
-             writeContents(saveFile, possQuit);
-             System.exit(0);
-         }
-     }
+    private void handleQuitCase(String input) {
+        String possQuit = input.toLowerCase().substring(0, input.length() - 2);
+        if (input.toLowerCase().substring(input.length() - 2).equals(":q")) {
+            File saveFile = join(SAVES, "save");
+            writeContents(saveFile, possQuit);
+            System.exit(0);
+        }
+    }
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -213,7 +213,6 @@ public class Engine {
         if (input.toLowerCase().charAt(0) == 'l') {
             input = readContentsAsString(join(SAVES, "save")) + input;
         }
-        System.out.println(input);
         int sPos = input.toLowerCase().indexOf('s');
         long seed = Long.parseLong(input.substring(1, sPos));
         String commands = input.substring(sPos + 1);

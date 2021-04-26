@@ -149,7 +149,7 @@ public class Area {
             this.x2 = this.x1 + Math.abs(tempX1 - tempX2);
             this.y1 = Math.min(tempY1, tempY2);
             this.y2 = this.y1 + Math.abs(tempY1 - tempY2);
-            for(int i = this.x1; i <= this.x2; i++) {
+            for (int i = this.x1; i <= this.x2; i++) {
                 for (int j = this.y1; j <= this.y2; j++) {
                     world[i][j] = FLOOR_TILE;
                 }
