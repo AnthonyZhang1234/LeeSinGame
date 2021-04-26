@@ -117,7 +117,7 @@ public class Engine {
     public void handleQuitCase(String input) {
         String possQuit = input.toLowerCase().substring(0, input.length() - 2);
         if (input.toLowerCase().substring(input.length() - 2).equals(":q")) {
-            File saveFile = join(SAVES, "save.txt");
+            File saveFile = join(CWD, "save.txt");
             writeContents(saveFile, possQuit);
             System.exit(0);
         }
@@ -149,7 +149,7 @@ public class Engine {
                             drawSeed();
                             break;
                         case 'l':
-                            input = readContentsAsString(join(SAVES, "save.txt"));
+                            input = readContentsAsString(join(CWD, "save.txt"));
                             input += typed;
                             count = updateWorld(input, count);
                             break;
@@ -211,7 +211,7 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
         if (input.toLowerCase().charAt(0) == 'l') {
-            input = readContentsAsString(join(SAVES, "save")) + input;
+            input = readContentsAsString(join(CWD, "save.txt")) + input;
         }
         int sPos = input.toLowerCase().indexOf('s');
         long seed = Long.parseLong(input.substring(1, sPos));
@@ -224,9 +224,6 @@ public class Engine {
         }
 
         finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame);
-        if (!SAVES.exists()) {
-            SAVES.mkdir();
-        }
         handleQuitCase(input);
         return finalWorldFrame;
     }
