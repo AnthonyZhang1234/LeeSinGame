@@ -227,9 +227,9 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
-        if (input.toLowerCase().charAt(0) == 'l') { // for AG
-            input = Utils.readContentsAsString(Utils.join(CWD, "save.txt")) + input; // for AG
-        } // for AG
+        //        if (input.toLowerCase().charAt(0) == 'l') { // for AG
+        //            input = Utils.readContentsAsString(Utils.join(CWD, "save.txt")) + input; // for AG
+        //        } // for AG
         boolean load = false;
         if (input.length() > 4 && input.substring(0, 4).equals("load")) {
             input = input.substring(4);
@@ -244,7 +244,7 @@ public class Engine {
             finalWorldFrame = bigBoy.generateWorld(seed);
         }
         finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame, ter, load);
-        handleQuitCase(input, true); // for AG
+        // handleQuitCase(input, true); // for AG
         return finalWorldFrame;
     }
 }
