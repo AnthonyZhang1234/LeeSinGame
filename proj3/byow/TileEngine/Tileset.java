@@ -33,14 +33,6 @@ public class Tileset {
     public static final TETile SAND = new TETile('▒', Color.yellow, Color.black, "sand");
     public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
-<<<<<<< HEAD
-    public static final TETile LEE_SIN = new TETile('L', Color.yellow, Color.black, "lee sin", "lee_sin_floor_3.png");
-    public static final TETile LEE_SIN_2 = new TETile('E', Color.yellow, Color.black, "lee sin 2", "lee_sin2.png");
-    public static final TETile BASIC_WALL = new TETile('W', Color.black, Color.black, "basic wall", "basic_wall.png");
-    public static final TETile BASIC_FLOOR = new TETile('F', Color.black, Color.black, "basic floor", "basic_floor.png");
-    public static final TETile BASIC_FLOOR_2 = new TETile('F', Color.black, Color.black, "basic floor 2", "basic_floor_2.png");
-    public static final TETile BASIC_FLOOR_3 = new TETile('F', Color.black, Color.black, "basic floor 3", "basic_floor_3.png");
-=======
     public static final TETile LEE_SIN = new TETile('L', Color.yellow, Color.black,
             "Lee Sin", "lee_sin_floor_3.png");
     public static final TETile LEE_SIN_2 = new TETile('E', Color.yellow, Color.black,
@@ -73,7 +65,6 @@ public class Tileset {
             "Devil's Flame", "flame.png");
     public static final TETile DEAD_LEE = new TETile('F', Color.black, Color.black,
             "Dead Lee Sin", "dead_lee_sin.png");
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
 }
 
 

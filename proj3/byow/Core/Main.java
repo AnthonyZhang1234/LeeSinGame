@@ -16,13 +16,7 @@ public class Main {
         // DO NOT CHANGE THESE LINES YET ;)
         } else if (args.length == 2 && args[0].equals("-p")) {
             System.out.println("To be implemented");
-<<<<<<< HEAD
-        }
-        // DO NOT CHANGE THESE LINES YET ;)
-        else {
-=======
         } else {
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
             Engine engine = new Engine();
             engine.interactWithKeyboard();
         }

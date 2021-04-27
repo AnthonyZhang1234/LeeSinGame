@@ -23,12 +23,8 @@ public class Area {
     private final int minSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 3;
     private final int maxSideLength = Math.min(WORLD_LENGTH, WORLD_WIDTH) / 2;
     private final ArrayList<Area> ALL_MIGHTY = new ArrayList<Area>();
-<<<<<<< HEAD
-    private final TETile FLOOR_TILE = Tileset.BASIC_FLOOR_3;
-=======
     private final TETile FLOOR_TILE = Tileset.DIM_FIVE;
     private final TETile CURSED_TILE = Tileset.FLAME;
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
 
 
     /** Indicates the length of the area. */
@@ -53,8 +49,6 @@ public class Area {
     private int ogLeeX;
     private int leeY;
     private int ogLeeY;
-<<<<<<< HEAD
-=======
     private TETile leeTile;
     /** Set holding solid tiles. */
     private HashSet<TETile> solidTiles;
@@ -75,7 +69,6 @@ public class Area {
     private boolean shaco;
     /** Shaco's confusion. */
     private int confusedIndex;
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
 
     /** Creates Area. */
     public Area(int x, int y, int w, int l) {
@@ -203,9 +196,6 @@ public class Area {
             this.lanternY = RandomUtils.uniform(gen, this.y1 + 1, this.y2);
             for (int i = this.x1; i <= this.x2; i++) {
                 for (int j = this.y1; j <= this.y2; j++) {
-<<<<<<< HEAD
-                    world[i][j] = FLOOR_TILE;
-=======
                     // if tile is # distance away from lantern, make it # tile
                     world[i][j] = FLOOR_TILE;
                 }
@@ -224,7 +214,6 @@ public class Area {
                     if (world[i][j] == leeTile) {
                         leeTile = floors.get(Math.min(distance - 1, 6));
                     }
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
                 }
             }
         }
@@ -286,19 +275,6 @@ public class Area {
         if (room1y > room2y) {  // Right-Down or Down-Right
             if (el) {
                 for (int x = room1x; x <= room2x; x++) {
-<<<<<<< HEAD
-                    world[x][room1y] = FLOOR_TILE;
-                }
-                for (int y = room1y; y >= room2y; y--) {
-                    world[room2x][y] = FLOOR_TILE;
-                }
-            } else {
-                for (int y = room1y; y >= room2y; y--) {
-                    world[room1x][y] = FLOOR_TILE;
-                }
-                for (int x = room1x; x <= room2x; x++) {
-                    world[x][room2y] = FLOOR_TILE;
-=======
                     makeHallway(x, room1y, world);
                 }
                 for (int y = room1y; y >= room2y; y--) {
@@ -310,25 +286,11 @@ public class Area {
                 }
                 for (int x = room1x; x <= room2x; x++) {
                     makeHallway(x, room2y, world);
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
                 }
             }
         } else {                // Right-Up or Up-Right
             if (el) {
                 for (int x = room1x; x <= room2x; x++) {
-<<<<<<< HEAD
-                    world[x][room1y] = FLOOR_TILE;
-                }
-                for (int y = room1y; y <= room2y; y++) {
-                    world[room2x][y] = FLOOR_TILE;
-                }
-            } else {
-                for (int y = room1y; y <= room2y; y++) {
-                    world[room1x][y] = FLOOR_TILE;
-                }
-                for (int x = room1x; x <= room2x; x++) {
-                    world[x][room2y] = FLOOR_TILE;
-=======
                     makeHallway(x, room1y, world);
                 }
                 for (int y = room1y; y <= room2y; y++) {
@@ -340,7 +302,6 @@ public class Area {
                 }
                 for (int x = room1x; x <= room2x; x++) {
                     makeHallway(x, room2y, world);
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
                 }
             }
         }
@@ -351,17 +312,6 @@ public class Area {
         boolean yOverZero = y - 1 >= 0;
         boolean xBehindBorder = x + 1 < WORLD_WIDTH;
         boolean yBehindBorder = y + 1 < WORLD_LENGTH;
-<<<<<<< HEAD
-        boolean botLeft = xOverZero && yOverZero && world[x - 1][y - 1] == FLOOR_TILE;
-        boolean botRight = xBehindBorder && yOverZero && world[x + 1][y - 1] == FLOOR_TILE;
-        boolean topLeft = xOverZero && yBehindBorder && world[x - 1][y + 1] == FLOOR_TILE;
-        boolean topRight = xBehindBorder && yBehindBorder && world[x + 1][y + 1] == FLOOR_TILE;
-        return botLeft || botRight || topLeft || topRight;
-    }
-
-    public TETile[][] generateWorld(long seed, String commands) {
-        Random gen = new Random(seed % Long.MAX_VALUE);
-=======
         boolean botLeft = xOverZero && yOverZero && floors.contains(world[x - 1][y - 1]);
         boolean botRight = xBehindBorder && yOverZero && floors.contains(world[x + 1][y - 1]);
         boolean topLeft = xOverZero && yBehindBorder && floors.contains(world[x - 1][y + 1]);
@@ -371,7 +321,6 @@ public class Area {
 
     public TETile[][] generateWorld(long seed) {
         Random gen = new Random(seed);
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
 
         // initialize tiles
         TETile[][] world = new TETile[WORLD_WIDTH][WORLD_LENGTH];
@@ -383,16 +332,6 @@ public class Area {
         makeAreas(world, gen);
         connect4(world, gen);
         int leeCount = 0;
-<<<<<<< HEAD
-        for (int x = 0; x < WORLD_WIDTH; x ++) {
-            for (int y = 0; y < WORLD_LENGTH; y ++) {
-                if (world[x][y] == Tileset.NOTHING && neighborsIsFloor(x, y, world)) {
-                    world[x][y] = Tileset.BASIC_WALL;
-                }
-                if (leeCount == 0 && world[x][y] == FLOOR_TILE) {
-                    // Maybe set some avatar object or variable to these coords
-                    world[x][y] = Tileset.LEE_SIN;
-=======
         for (int x = 0; x < WORLD_WIDTH; x++) {
             for (int y = 0; y < WORLD_LENGTH; y++) {
                 if (world[x][y] == Tileset.NOTHING && neighborsIsFloor(x, y, world)) {
@@ -402,14 +341,11 @@ public class Area {
                 if (leeCount == 0 && floors.contains(world[x][y])) {
                     this.leeTile = world[x][y]; // Saves tile where we want Lee Sin
                     world[x][y] = Tileset.LEE_SIN; // Puts Lee Sin on tile
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
                     leeCount++;
                     leeX = x;
                     ogLeeX = x;
                     leeY = y;
                     ogLeeY = y;
-<<<<<<< HEAD
-=======
                 }
             }
         }
@@ -468,20 +404,10 @@ public class Area {
                     dab.activated = false;
                 } else {
                     dab.activated = true;
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
                 }
                 break;
             }
         }
-<<<<<<< HEAD
-        return world;
-    }
-
-    public TETile[][] moveLee(String commands, TETile[][] world) {
-        if (commands.length() > 0) {
-            world[leeX][leeY] = FLOOR_TILE;
-        }
-=======
         if (turnOff) {
             darkenRoomOfLantern(world, roomX1, roomX2, roomY1, roomY2, lanX, lanY);
         } else {
@@ -557,16 +483,10 @@ public class Area {
         }
         int lastLeeX = leeX;
         int lastLeeY = leeY;
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
         leeX = ogLeeX;
         leeY = ogLeeY;
         for (int i = 0; i < commands.length(); i++) {
             char move = commands.toLowerCase().charAt(i);
-<<<<<<< HEAD
-            switch(move) {
-                case 'w':
-                    if (world[leeX][leeY + 1] != Tileset.BASIC_WALL) {
-=======
             if (this.confusedIndex != -1 && i >= this.confusedIndex) {
                 move = invertChar(move);
             }
@@ -574,39 +494,22 @@ public class Area {
                 case 'w':
                     if (!this.solidTiles.contains(world[leeX][leeY + 1])) {
                         curseCheck(world, load, leeX, leeY);
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
                         this.leeY++;
                     }
                     break;
                 case 'a':
-<<<<<<< HEAD
-                    if (world[leeX - 1][leeY] != Tileset.BASIC_WALL) {
-=======
                     if (!this.solidTiles.contains(world[leeX - 1][leeY])) {
                         curseCheck(world, load, leeX, leeY);
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
                         this.leeX--;
                     }
                     break;
                 case 's':
-<<<<<<< HEAD
-                    if (world[leeX][leeY - 1] != Tileset.BASIC_WALL) {
-=======
                     if (!this.solidTiles.contains(world[leeX][leeY - 1])) {
                         curseCheck(world, load, leeX, leeY);
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
                         this.leeY--;
                     }
                     break;
                 case 'd':
-<<<<<<< HEAD
-                    if (world[leeX + 1][leeY] != Tileset.BASIC_WALL) {
-                        this.leeX++;
-                    }
-                    break;
-            }
-        }
-=======
                     if (!this.solidTiles.contains(world[leeX + 1][leeY])) {
                         curseCheck(world, load, leeX, leeY);
                         this.leeX++;
@@ -642,7 +545,6 @@ public class Area {
         if (win) {
             gameWin(world, ter);
         }
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
         world[leeX][leeY] = Tileset.LEE_SIN;
         return world;
     }

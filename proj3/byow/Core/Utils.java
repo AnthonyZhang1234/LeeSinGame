@@ -161,21 +161,12 @@ class Utils {
 
     /** Filter out all but plain files. */
     private static final FilenameFilter PLAIN_FILES =
-<<<<<<< HEAD
-            new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return new File(dir, name).isFile();
-                }
-            };
-=======
         new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return new File(dir, name).isFile();
             }
         };
->>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
 
     /** Returns a list of the names of all plain files in the directory DIR, in
      *  lexicographic order as Java Strings.  Returns null if DIR does
