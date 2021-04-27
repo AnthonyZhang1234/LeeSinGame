@@ -5,8 +5,6 @@ import byow.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.io.*;
-import java.util.*;
-import static byow.Core.Utils.*;
 
 import java.awt.*;
 
@@ -24,7 +22,7 @@ public class Engine {
     /** Current Working Directory. */
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** Folder that holds save files. */
-    public static final File SAVES = join(CWD, "saves");
+    public static final File SAVES = Utils.join(CWD, "saves");
     /** Helper variable that determines if the world has been created. */
     private boolean bigBoyNotCreated = true;
     /** Current game world. */
@@ -93,14 +91,14 @@ public class Engine {
         int x = (int) StdDraw.mouseX();
         int y = (int) StdDraw.mouseY();
         if (bigBoy.isCursed()) {
-            StdDraw.text(WIDTH / 2, HEIGHT - 1, "You've been cursed!");
+            StdDraw.text(5, HEIGHT - 1, "You've been cursed!");
         }
         if (bigBoy.isConfused()) {
             StdDraw.text(WIDTH - 5, HEIGHT - 1, "You're now confused!");
         }
         if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT - 1) {
             TETile hudTile = world[x][y];
-            StdDraw.text(5, HEIGHT - 1, hudTile.description());
+            StdDraw.text(WIDTH / 2, HEIGHT - 1, hudTile.description());
             StdDraw.show();
         }
     }
@@ -132,8 +130,8 @@ public class Engine {
     public void handleQuitCase(String input, boolean ag) {
         String possQuit = input.toLowerCase().substring(0, input.length() - 2);
         if (input.toLowerCase().substring(input.length() - 2).equals(":q")) {
-            File saveFile = join(CWD, "save.txt");
-            writeContents(saveFile, possQuit);
+            File saveFile = Utils.join(CWD, "save.txt");
+            Utils.writeContents(saveFile, possQuit);
             if (!ag) {
                 System.exit(0);
             }
@@ -166,7 +164,8 @@ public class Engine {
                             drawSeed();
                             break;
                         case 'l':
-                            input = "load" + readContentsAsString(join(CWD, "save.txt"));
+                            input = "load" +
+                                    Utils.readContentsAsString(Utils.join(CWD, "save.txt"));
                             input += typed;
                             count = updateWorld(input, count);
                             input = input.substring(4);
@@ -228,9 +227,9 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
-        //        if (input.toLowerCase().charAt(0) == 'l') { // for AG
-        //            input = readContentsAsString(join(CWD, "save.txt")) + input; // for AG
-        //        } // for AG
+        if (input.toLowerCase().charAt(0) == 'l') { // for AG
+            input = Utils.readContentsAsString(Utils.join(CWD, "save.txt")) + input; // for AG
+        } // for AG
         boolean load = false;
         if (input.length() > 4 && input.substring(0, 4).equals("load")) {
             input = input.substring(4);
@@ -245,7 +244,7 @@ public class Engine {
             finalWorldFrame = bigBoy.generateWorld(seed);
         }
         finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame, ter, load);
-        // handleQuitCase(input, true); // for AG
+        handleQuitCase(input, true); // for AG
         return finalWorldFrame;
     }
 }
