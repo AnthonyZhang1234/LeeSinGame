@@ -22,9 +22,15 @@ public class Engine {
     /** Helper variable storing number characters. */
     public static final String NUMBERS = "0123456789";
     /** Current Working Directory. */
+<<<<<<< HEAD
     private static final File CWD = new File(System.getProperty("user.dir"));
     /** Folder that holds save files. */
     private static final File SAVES = join(CWD, "saves");
+=======
+    public static final File CWD = new File(System.getProperty("user.dir"));
+    /** Folder that holds save files. */
+    public static final File SAVES = join(CWD, "saves");
+>>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
     /** Helper variable that determines if the world has been created. */
     private boolean bigBoyNotCreated = true;
     /** Current game world. */
@@ -54,6 +60,18 @@ public class Engine {
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4,
                 "Enter a number seed! Press (S) when satisfied!");
+<<<<<<< HEAD
+=======
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4 + 2,
+                "Goal: Turn on all the lanterns!");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4, "Controls [Usually ;)]:");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 1, "W - Move Up");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 2, "A - Move Left");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 3, "S - Move Down");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 4, "D - Move Right");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 5, "O - Turn Lantern Off");
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 4 - 6, "P - Turn Lantern On");
+>>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
         StdDraw.show();
     }
 
@@ -65,7 +83,11 @@ public class Engine {
         StdDraw.setFont(font);
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.clear(Color.BLACK);
+<<<<<<< HEAD
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4, "Best Game");
+=======
+        StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT * 3 / 4, "Lee Sin and the Spooky Lanterns");
+>>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 2, "Press (N) to Start!");
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 2 - 5, "Press (L) to Load Game!");
         StdDraw.text(MENU_WIDTH / 2, MENU_HEIGHT / 2 - 10, "Press (Q) to Quit!");
@@ -83,8 +105,19 @@ public class Engine {
         StdDraw.setPenColor(Color.WHITE);
         int x = (int) StdDraw.mouseX();
         int y = (int) StdDraw.mouseY();
+<<<<<<< HEAD
         if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT - 1) {
             TETile hudTile = world[(int) x][(int) y];
+=======
+        if (bigBoy.isCursed()) {
+            StdDraw.text(WIDTH / 2, HEIGHT - 1, "You've been cursed!");
+        }
+        if (bigBoy.isConfused()) {
+            StdDraw.text(WIDTH - 5, HEIGHT - 1, "You're now confused!");
+        }
+        if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT - 1) {
+            TETile hudTile = world[x][y];
+>>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
             StdDraw.text(5, HEIGHT - 1, hudTile.description());
             StdDraw.show();
         }
@@ -96,11 +129,16 @@ public class Engine {
     private char lowerCase(char c) {
         String temp = "" + c;
         return temp.toLowerCase().charAt(0);
+<<<<<<< HEAD
      }
+=======
+    }
+>>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
 
     /**
      * Method to update the world whenever the user presses a key.
      */
+<<<<<<< HEAD
      private int updateWorld(String input, int count) {
          if (count == 0) {
              ter.initialize(WIDTH, HEIGHT);
@@ -110,10 +148,22 @@ public class Engine {
          ter.renderFrame(finalWorldFrame);
          return count;
      }
+=======
+    private int updateWorld(String input, int count) {
+        if (count == 0) {
+            ter.initialize(WIDTH, HEIGHT);
+            count++;
+        }
+        finalWorldFrame = interactWithInputString(input);
+        ter.renderFrame(finalWorldFrame);
+        return count;
+    }
+>>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
 
     /**
      * Method that handles the scenario where the player types ':q' to quit the game.
      */
+<<<<<<< HEAD
      private void handleQuitCase(String input) {
          String possQuit = input.toLowerCase().substring(0, input.length() - 2);
          if (input.toLowerCase().substring(input.length() - 2).equals(":q")) {
@@ -122,6 +172,18 @@ public class Engine {
              System.exit(0);
          }
      }
+=======
+    public void handleQuitCase(String input, boolean ag) {
+        String possQuit = input.toLowerCase().substring(0, input.length() - 2);
+        if (input.toLowerCase().substring(input.length() - 2).equals(":q")) {
+            File saveFile = join(CWD, "save.txt");
+            writeContents(saveFile, possQuit);
+            if (!ag) {
+                System.exit(0);
+            }
+        }
+    }
+>>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -137,9 +199,15 @@ public class Engine {
         int count = 0;
         boolean inGame = false;
         while (true) {
+<<<<<<< HEAD
             // this should run once you type some keys to be the seed
             if (StdDraw.hasNextKeyTyped()) {
                 //when the user does not type n or s
+=======
+            // this should run once you type some keys
+            if (StdDraw.hasNextKeyTyped()) {
+                //checks if the user wanted to do some action from the menu
+>>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
                 char typed = lowerCase(StdDraw.nextKeyTyped());
                 if (input.length() == 0) {
                     switch (typed) {
@@ -149,9 +217,16 @@ public class Engine {
                             drawSeed();
                             break;
                         case 'l':
+<<<<<<< HEAD
                             input = readContentsAsString(join(SAVES, "save"));
                             input += typed;
                             count = updateWorld(input, count);
+=======
+                            input = "load" + readContentsAsString(join(CWD, "save.txt"));
+                            input += typed;
+                            count = updateWorld(input, count);
+                            input = input.substring(4);
+>>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
                             break;
                         case 'q':
                             System.exit(0);
@@ -167,10 +242,17 @@ public class Engine {
                             drawFrame(input.substring(1));
                             drawSeed();
                         }
+<<<<<<< HEAD
                     } else if (input.length() > 2) {
                         inGame = true;
                         input += typed;
                         handleQuitCase(input);
+=======
+                    } else if (input.length() > 1) {
+                        inGame = true;
+                        input += typed;
+                        handleQuitCase(input, false);
+>>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
                         count = updateWorld(input, count);
                     }
                 }
@@ -210,6 +292,7 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
+<<<<<<< HEAD
         int sPos = input.toLowerCase().indexOf('s');
         long seed = Long.parseLong(input.substring(1, sPos));
         String commands = input.substring(sPos + 1);
@@ -222,6 +305,26 @@ public class Engine {
 
         finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame);
 
+=======
+        //        if (input.toLowerCase().charAt(0) == 'l') { // for AG
+        //            input = readContentsAsString(join(CWD, "save.txt")) + input; // for AG
+        //        } // for AG
+        boolean load = false;
+        if (input.length() > 4 && input.substring(0, 4).equals("load")) {
+            input = input.substring(4);
+            load = true;
+        }
+        int sPos = input.toLowerCase().indexOf('s');
+        long seed = Long.parseLong(input.substring(1, sPos));
+        String commands = input.substring(sPos + 1);
+        if (bigBoyNotCreated) {
+            bigBoy = new Area(0, 0, WIDTH, HEIGHT);
+            bigBoyNotCreated = false;
+            finalWorldFrame = bigBoy.generateWorld(seed);
+        }
+        finalWorldFrame = bigBoy.moveLee(commands, finalWorldFrame, ter, load);
+        // handleQuitCase(input, true); // for AG
+>>>>>>> bfaa09af8f1cdcb5d8f66453427e9e7e94eaa033
         return finalWorldFrame;
     }
 }
