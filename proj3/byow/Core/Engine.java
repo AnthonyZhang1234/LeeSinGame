@@ -164,8 +164,8 @@ public class Engine {
                             drawSeed();
                             break;
                         case 'l':
-                            input = "load" +
-                                    Utils.readContentsAsString(Utils.join(CWD, "save.txt"));
+                            input = "load"
+                                    + Utils.readContentsAsString(Utils.join(CWD, "save.txt"));
                             input += typed;
                             count = updateWorld(input, count);
                             input = input.substring(4);
